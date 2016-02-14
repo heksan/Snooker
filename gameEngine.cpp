@@ -17,9 +17,10 @@ using namespace glm;
 #include "gameEngine.h"
 #include "ball.h" 
 
-float ballRadius = 2.6f;
-float tableWidth = 89.0f;
-float tableLength = 178.5f;
+const float ballRadius = 2.6f;
+const float tableWidth = 89.0f;
+const float tableLength = 178.5f;
+const float precisionSteps = 200.0f; 
 
 glm::mat4 moveBall(Ball& ball){
 	//std::cout << "obj values\n";
@@ -35,7 +36,7 @@ glm::mat4 moveBall(Ball& ball){
 	return ball.matrix;
 
 }
-void moveBalls(std::list<Ball*> listOfBalls){
+void moveBalls(std::list<Ball*> listOfBalls){//////////////fix this
 	for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
 		
 		//std::cout << "list values\n";
@@ -45,8 +46,8 @@ void moveBalls(std::list<Ball*> listOfBalls){
 		//std::cout << "\n";
 		(*currentBall)->matrix = glm::translate((*currentBall)->matrix, (*currentBall)->movementVector);
 		(*currentBall)->ballPosition = (*currentBall)->ballPosition + (*currentBall)->movementVector;
-		(*currentBall)->movementVector.x = (*currentBall)->movementVector.x *0.999;
-		(*currentBall)->movementVector.z = (*currentBall)->movementVector.z *0.999;
+		(*currentBall)->movementVector.x = (*currentBall)->movementVector.x *0.90;
+		(*currentBall)->movementVector.z = (*currentBall)->movementVector.z *0.90;
 	}
 }
 
@@ -60,14 +61,7 @@ void initMovement(float speedVec,glm::vec3 cameraPosition,glm::vec3 ballPosition
 
 //change for stack later
 bool checkStable(Ball ball){// later stack
-	if (glm::length(ball.movementVector) <= 1.0){
-		std::cout << "stable true\n";
-		return true;
-	}
-	else
-	{
-		return false; 
-	}
+	return glm::length(ball.movementVector) <= 1.0;
 }
 
 bool checkStable(std::list<Ball*> listOfBalls){
@@ -153,9 +147,9 @@ void checkWallCollisions(std::list<Ball*> listOfBalls){ // can be optimized in m
 		
 		if (abs((*ball)->ballPosition.x) >= tableWidth - ballRadius){
 			//trace back to contact point
-			glm::vec3 stepBack = (*ball)->movementVector / 200.0f;
+			glm::vec3 stepBack = (*ball)->movementVector / precisionSteps;
 			glm::vec3 newBallPosition = (*ball)->ballPosition;
-			for (int i = 0; i < 200; i++){
+			for (int i = 0; i < precisionSteps; i++){
 				newBallPosition = newBallPosition - stepBack;
 				if (newBallPosition.x <= tableWidth - ballRadius){
 					//std::cout << "moved back from wall " << i << "  times, new distance is(the closer to 5.2 the better) :"
@@ -171,9 +165,9 @@ void checkWallCollisions(std::list<Ball*> listOfBalls){ // can be optimized in m
 
 		if (abs((*ball)->ballPosition.z) >= (tableLength - ballRadius)){
 			//trace back to contact point
-			glm::vec3 stepBack = (*ball)->movementVector / 200.0f;
+			glm::vec3 stepBack = (*ball)->movementVector / precisionSteps;
 			glm::vec3 newBallPosition = (*ball)->ballPosition;
-			for (int i = 0; i < 200; i++){
+			for (int i = 0; i < precisionSteps; i++){
 				newBallPosition = newBallPosition - stepBack;
 				if (newBallPosition.z <= tableLength - ballRadius){
 					//std::cout << "moved back from wall " << i << "  times, new distance is(the closer to 5.2 the better) :"
@@ -193,12 +187,12 @@ void checkWallCollisions(std::list<Ball*> listOfBalls){ // can be optimized in m
 //ball hitting, ball hitted
 void collideStationary(Ball* ballOne, Ball* ballTwo){//assumes no rotation hence 90deg between
 	//finding posint of collision(not accurate, can be fixed later, i cant into maths today)
-	glm::vec3 stepBack = ballOne->movementVector / 200.0f;
+	glm::vec3 stepBack = ballOne->movementVector / precisionSteps;
 	glm::vec3 newBallPosition = ballOne->ballPosition;
-	for (int i = 0; i < 200;i++){
+	for (int i = 0; i < precisionSteps; i++){
 		newBallPosition = newBallPosition - stepBack;
 		if (glm::distance(newBallPosition, ballTwo->ballPosition) > 2 * ballRadius){
-			//std::cout << "moved back  " << i << "  times, new distance is(the closer to 5.2 the better) :" << glm::distance(newBallPosition, ballTwo->ballPosition) << "\n";
+			std::cout << "moved back  " << i << "  times, new distance is(the closer to 5.2 the better) :" << glm::distance(newBallPosition, ballTwo->ballPosition) << "\n";
 			ballOne->matrix = glm::translate(ballOne->matrix, (newBallPosition - ballOne->ballPosition));
 			ballOne->ballPosition = newBallPosition;
 			break;
@@ -240,11 +234,11 @@ void collideStationary(Ball* ballOne, Ball* ballTwo){//assumes no rotation hence
 }
 
 void collideMoving(Ball *ballOne,Ball *ballTwo){
-	glm::vec3 stepBackOne = ballOne->movementVector / 200.0f;
-	glm::vec3 stepBackTwo = ballTwo->movementVector / 200.0f;
+	glm::vec3 stepBackOne = ballOne->movementVector / precisionSteps;
+	glm::vec3 stepBackTwo = ballTwo->movementVector / precisionSteps;
 	glm::vec3 newBallOnePosition = ballOne->ballPosition;
 	glm::vec3 newBallTwoPosition = ballTwo->ballPosition;
-	for (int i = 0; i < 200; i++){
+	for (int i = 0; i < precisionSteps; i++){
 		newBallOnePosition = newBallOnePosition - stepBackOne;
 		newBallTwoPosition = newBallTwoPosition - stepBackTwo;
 		if ((glm::distance(newBallOnePosition,newBallTwoPosition) > 2 * ballRadius)){
@@ -274,5 +268,16 @@ void changeDirection(Ball* ball, char xORz){
 	}
 	if (xORz == 'z'){
 		ball->movementVector.z = -ball->movementVector.z;
+	}
+}
+void checkRayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDirection){
+	glm::vec3 current;
+	current = rayOrigin + rayDirection;
+	for (int i = 0; i < 300; i++){
+		current = current + rayDirection;
+		if (current.y < 0.0){
+			std::cout << "plane hit in " << current.x << "," << current.z<<"\n";
+			break;
+		}
 	}
 }

@@ -15,6 +15,7 @@ void checkWallCollisions(std::list<Ball*> listOfBalls);
 void collideStationary(Ball* ballOne, Ball* ballTwo);
 void collideMoving(Ball *ballOne, Ball  *ballTwo);
 void changeDirection(Ball* ball, char xORz);
+void checkRayIntersection(glm::vec3 rayOrigin, glm::vec3 rayDirection);
 //void createBuffers(Ball& ball);
 
 #endif

@@ -6,5 +6,5 @@ void computeCameraMatricesFromInputs();
 glm::vec3 computeMovFromInput();
 glm::mat4 getProjectionMatrix();
 glm::mat4 getViewMatrix();
-
+void lookForCueStick(glm::vec3& rayOrigin, glm::vec3& rayDirection);
 #endif

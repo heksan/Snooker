@@ -24,7 +24,6 @@ using namespace glm;
 
 int main(void)
 {
-	std::list<Ball*> listOfStationaryBalls;//not used
 	std::list<Ball*> listOfBalls;
 
 	Ball cueBall(0, glm::vec3(0, 0, 0));
@@ -42,6 +41,8 @@ int main(void)
 	listOfBalls.push_back(&verySpecialBall);
 
 
+	glm::vec3 rayOrigin;
+	glm::vec3 rayDirection;
 	glm::vec3 cameraPosition;
 
 
@@ -145,27 +146,13 @@ int main(void)
 
 
 
-	////////////////do balls - buffers relocating to be fixed//////////////////////
-
 	createBuffers(listOfBalls);
 
-	//createBuffer(verySpecialBall);
-	//createBuffer(cueBall);
-	//createBuffer(justBall);
-	//createBuffer(justAnballTwo);
 
 	relocateMatrices(listOfBalls);
 
-	//relocateMatrix(verySpecialBall);
-	//relocateMatrix(cueBall);
-	//relocateMatrix(justBall);
-	//relocateMatrix(justAnballTwo);
-
 
 	do{
-
-		//std::cout << listOfBalls.size();//fix
-
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -176,13 +163,13 @@ int main(void)
 		//Main game loop
 		if (!stable){
 			stable = checkStable(listOfBalls);
-			//cueBall.matrix = moveBall(cueBall);//fix speed vec - use as multi for movvec,//////////////////////////////////ref function to take ball
-			moveBalls(listOfBalls);//change all list of balls return to void, its just a pointer list
+			moveBalls(listOfBalls);
 			checkWallCollisions(listOfBalls);
 			checkBallCollisions(listOfBalls);
 		}
 		else{
 			cameraPosition = computeMovFromInput();
+
 			initMovement(6.0f, cameraPosition, cueBall.ballPosition, cueBall.movementVector);//later force from gUI
 		}
 
@@ -190,13 +177,13 @@ int main(void)
 		glm::mat4 ProjectionMatrix = getProjectionMatrix();
 		glm::mat4 ViewMatrix = getViewMatrix();
 
+		lookForCueStick(rayOrigin, rayDirection);
+		
+		
+
 		
 
 		drawBalls(listOfBalls, MatrixID, ViewMatrix, Projection);
-
-		//drawBall(verySpecialBall, MatrixID, ViewMatrix, ProjectionMatrix);
-		//drawBall(justBall, MatrixID, ViewMatrix, ProjectionMatrix);
-		//drawBall(justAnballTwo, MatrixID, ViewMatrix, ProjectionMatrix);
 
 
 		////////////floor////////////////
@@ -244,6 +231,7 @@ int main(void)
 		glfwPollEvents();
 		glfwSwapInterval(1);
 
+
 	} // Check if the ESC key was pressed or the window was closed
 	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
 	glfwWindowShouldClose(window) == 0);
@@ -265,12 +253,12 @@ int main(void)
 //notes
 //      REFACTOR BITCH
 //
-//
+// 
 /// cue stick
 // fix controls(fixed ish)
 // fix ball.cpp speghetti
 //, 
-//
+// ballmovement-x rahter than *0.xxx
 // fix cleanup glDeleteBuffers(1, &cueBall.vertexbuffer);
 // glDeleteBuffers(1, &cueBall.colorbuffer);
 // glDeleteProgram(programID);
