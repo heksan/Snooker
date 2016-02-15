@@ -73,6 +73,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ball.cpp" />
+    <ClCompile Include="table.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="graphicsEngine.cpp" />
     <ClCompile Include="shader.cpp" />
@@ -82,6 +83,7 @@
   <ItemGroup>
     <ClInclude Include="ball.h" />
     <ClInclude Include="controls.h" />
+    <ClInclude Include="table.h" />
     <ClInclude Include="gameEngine.h" />
     <ClInclude Include="graphicsEngine.h" />
     <ClInclude Include="shader.h" />

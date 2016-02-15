@@ -39,6 +39,9 @@
     <ClCompile Include="graphicsEngine.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="table.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -55,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="graphicsEngine.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="table.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

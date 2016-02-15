@@ -21,10 +21,13 @@ using namespace glm;
 #include "gameEngine.h"
 #include "graphicsEngine.h"
 #include "ball.h"
+#include "table.h"
 
 int main(void)
 {
 	std::list<Ball*> listOfBalls;
+
+	Table table;
 
 	Ball cueBall(0, glm::vec3(0, 0, 0));
 	Ball justBall(1, glm::vec3(40, 0, 40));
@@ -134,18 +137,7 @@ int main(void)
 	};
 	
 
-	//floor buffers
-	GLuint vertexbufferFloor;
-	glGenBuffers(1, &vertexbufferFloor);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbufferFloor);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data_t), g_vertex_buffer_data_t, GL_STATIC_DRAW);
-	GLuint colorbufferFloor;
-	glGenBuffers(1, &colorbufferFloor);
-	glBindBuffer(GL_ARRAY_BUFFER, colorbufferFloor);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data_t), g_color_buffer_data_t, GL_STATIC_DRAW);
-
-
-
+	createBuffer(table);
 	createBuffers(listOfBalls);
 
 
@@ -153,10 +145,7 @@ int main(void)
 
 
 	do{
-		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Use our shader
 		glUseProgram(programID);
 
 
@@ -166,6 +155,7 @@ int main(void)
 			moveBalls(listOfBalls);
 			checkWallCollisions(listOfBalls);
 			checkBallCollisions(listOfBalls);
+			lookForCueStick();
 		}
 		else{
 			cameraPosition = computeMovFromInput();
@@ -177,60 +167,14 @@ int main(void)
 		glm::mat4 ProjectionMatrix = getProjectionMatrix();
 		glm::mat4 ViewMatrix = getViewMatrix();
 
-		lookForCueStick(rayOrigin, rayDirection);
-		
-		
-
-		
-
 		drawBalls(listOfBalls, MatrixID, ViewMatrix, Projection);
-
-
-		////////////floor////////////////
-		// Send our transformation to the currently bound shader, 
-		// in the "MVP" uniform
-		glm::mat4 MVP_floor = ProjectionMatrix * ViewMatrix * glm::mat4(1.0);
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP_floor[0][0]);
-
-		// 1rst attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbufferFloor);
-		glVertexAttribPointer(
-			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-			);
-
-		// 2nd attribute buffer : colors
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, colorbufferFloor);
-		glVertexAttribPointer(
-			1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-			3,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			0,                                // stride
-			(void*)0                          // array buffer offset
-			);
-
-		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLES, 0, 2 * 3); // 12*3 indices starting at 0 -> 12 triangles
-
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-
-
-
-		///////////////////////////////////////////////
+		drawTable(table, MatrixID, ViewMatrix, Projection);
 
 		// Swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 		glfwSwapInterval(1);
-
+		
 
 	} // Check if the ESC key was pressed or the window was closed
 	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
@@ -253,7 +197,7 @@ int main(void)
 //notes
 //      REFACTOR BITCH
 //
-// 
+// change look at 
 /// cue stick
 // fix controls(fixed ish)
 // fix ball.cpp speghetti
@@ -268,7 +212,7 @@ int main(void)
 //delete pointers when  in pocket - oh right, make pockets ffs
 //
 //
-//
+//mouse wheel
 //
 //
 //

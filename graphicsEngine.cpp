@@ -15,8 +15,20 @@ using namespace glm;
 
 #include "graphicsEngine.h"
 #include "ball.h" 
+#include "table.h"
 
 
+
+void createBuffer(Table& table){
+	
+	glGenBuffers(1, &table.vertexbufferTable);
+	glBindBuffer(GL_ARRAY_BUFFER, table.vertexbufferTable);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(table.vertex_buffer_data_table), table.vertex_buffer_data_table, GL_STATIC_DRAW);
+	
+	glGenBuffers(1, &table.colorbufferTable);
+	glBindBuffer(GL_ARRAY_BUFFER, table.colorbufferTable);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(table.color_buffer_data_table), table.color_buffer_data_table, GL_STATIC_DRAW);
+}
 
 
 
@@ -129,5 +141,42 @@ void drawBalls(std::list<Ball*> listOfBalls, GLuint MatrixID, glm::mat4 ViewMatr
 
 
 	}
+
+}
+
+void drawTable(Table table, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix){
+
+
+	table.MVP = ProjectionMatrix * ViewMatrix * table.matrix;
+	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &table.MVP[0][0]);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, table.vertexbufferTable);
+	glVertexAttribPointer(
+		0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
+		3,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		0,                  // stride
+		(void*)0            // array buffer offset
+		);
+
+	// 2nd attribute buffer : colors
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, table.colorbufferTable);
+	glVertexAttribPointer(
+		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+		3,                                // size
+		GL_FLOAT,                         // type
+		GL_FALSE,                         // normalized?
+		0,                                // stride
+		(void*)0                          // array buffer offset
+		);
+
+	glDrawArrays(GL_TRIANGLES, 0, 3*2);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+
+
 
 }
