@@ -155,10 +155,10 @@ int main(void)
 			moveBalls(listOfBalls);
 			checkWallCollisions(listOfBalls);
 			checkBallCollisions(listOfBalls);
-			lookForCueStick();
+			castRay();
 		}
 		else{
-			cameraPosition = computeMovFromInput();
+			cameraPosition = computeMovFromInput();//sets stable to false
 
 			initMovement(6.0f, cameraPosition, cueBall.ballPosition, cueBall.movementVector);//later force from gUI
 		}
@@ -167,8 +167,8 @@ int main(void)
 		glm::mat4 ProjectionMatrix = getProjectionMatrix();
 		glm::mat4 ViewMatrix = getViewMatrix();
 
-		drawBalls(listOfBalls, MatrixID, ViewMatrix, Projection);
-		drawTable(table, MatrixID, ViewMatrix, Projection);
+		drawBalls(listOfBalls, MatrixID, ViewMatrix, ProjectionMatrix);
+		drawTable(table, MatrixID, ViewMatrix, ProjectionMatrix);
 
 		// Swap buffers
 		glfwSwapBuffers(window);
@@ -197,7 +197,10 @@ int main(void)
 //notes
 //      REFACTOR BITCH
 //
-// change look at 
+//
+//fix wall collisions
+//change fov, update controls
+// 
 /// cue stick
 // fix controls(fixed ish)
 // fix ball.cpp speghetti
@@ -211,7 +214,7 @@ int main(void)
 //
 //delete pointers when  in pocket - oh right, make pockets ffs
 //
-//
+//angular velocity
 //mouse wheel
 //
 //

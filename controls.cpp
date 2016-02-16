@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <list>
+#define _USE_MATH_DEFINES
+#include <math.h>
 extern bool stable;
 extern GLFWwindow* window;  //fix this hack
 
@@ -15,7 +17,7 @@ using namespace glm;
 #include "gameEngine.h"
 double screenWidth = 1024;
 double screenHeight = 768;
-double posXTrack;
+double track;
 double posYTrack;
 
 
@@ -23,6 +25,14 @@ double xpos = screenWidth / 2;
 double ypos = screenHeight / 2;
 double prevxpos = screenWidth / 2;
 double prevypos = screenHeight / 2;
+
+glm::vec3 position = glm::vec3(100, 200, -5);
+glm::vec3 direction;
+float horizontalAngle = -3.14f/2.0f;
+float verticalAngle = -1.0f;
+float initialFoV = 45.0f;
+float speed = 45.0f; // 60 units / second
+float mouseSpeed = 0.005f;
 
 glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
@@ -36,18 +46,7 @@ glm::mat4 getProjectionMatrix(){
 
 
 
-// Initial position : on +Z
-glm::vec3 position = glm::vec3(100, 200, -5);
-glm::vec3 direction;
-// Initial horizontal angle : toward -Z
-float horizontalAngle = -3.14f/2.0f;
-// Initial vertical angle : none
-float verticalAngle = -1.0f;
-// Initial Field of View
-float initialFoV = 45.0f;
 
-float speed = 60.0f; // 3 units / second
-float mouseSpeed = 0.005f;
 
 
 glm::vec3 computeMovFromInput(){//no need for args
@@ -133,11 +132,30 @@ void computeCameraMatricesFromInputs(){
 
 }
 
+//returns 2d point (x,z) where ray intersects with y=0 plane
+void castRay(){
+	
+	float x = (2.0f * xpos) / screenWidth-1.0;
+	float y = 1.0f-(2.0f * ypos) / screenHeight;
+	
+	glm::vec4 rayEnd = vec4(x,y, -1.0, 1.0);	
+	glm::vec4 eye = glm::inverse(ProjectionMatrix) * rayEnd;
+	
+	eye = vec4(eye.x, eye.y, -1.0, 0.0);
+	glm::vec4 a = (glm::inverse(ViewMatrix) * eye);
+	glm::vec3 rayDir = glm::vec3(a.x, a.y, a.z);
+	rayDir = glm::normalize(rayDir);
 
-void lookForCueStick(){//rewrite
-
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS){
-		std::cout << direction.x << "," << direction.y << "," << direction.z << "\n";
-		//checkRayIntersection(position, rayDirection);
+	//std::cout << "camera direction :" << direction.x << "," << direction.y << "," << direction.z << "\n";
+	//std::cout << "length :" << glm::length(direction) << "\n";
+	//std::cout << "camera+ mouse direction :" << rayDir.x << "," << rayDir.y << "," << rayDir.z << "\n";
+	//std::cout << "length :" << glm::length(ray_wor) << "\n";
+	glm::vec3 currentPos = position;
+	for (int i = 0; i < 300; i++){
+		currentPos = currentPos + rayDir;
+		if (currentPos.y < 0.0){
+			//std::cout << "plane hit in " << currentPos.x << "," << currentPos.z << "\n";
+			break;
+		}
 	}
 }

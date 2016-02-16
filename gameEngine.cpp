@@ -150,8 +150,8 @@ void checkWallCollisions(std::list<Ball*> listOfBalls){ // can be optimized in m
 			glm::vec3 stepBack = (*ball)->movementVector / precisionSteps;
 			glm::vec3 newBallPosition = (*ball)->ballPosition;
 			for (int i = 0; i < precisionSteps; i++){
-				newBallPosition = newBallPosition - stepBack;
-				if (newBallPosition.x <= tableWidth - ballRadius){
+				newBallPosition = newBallPosition - (stepBack*2.0f);
+				if (abs(newBallPosition.x) <= tableWidth - ballRadius){
 					//std::cout << "moved back from wall " << i << "  times, new distance is(the closer to 5.2 the better) :"
 					//	<< glm::distance(newBallPosition, (*ball)->ballPosition) << "\n";
 					(*ball)->matrix = glm::translate((*ball)->matrix, (newBallPosition - (*ball)->ballPosition));
@@ -168,10 +168,8 @@ void checkWallCollisions(std::list<Ball*> listOfBalls){ // can be optimized in m
 			glm::vec3 stepBack = (*ball)->movementVector / precisionSteps;
 			glm::vec3 newBallPosition = (*ball)->ballPosition;
 			for (int i = 0; i < precisionSteps; i++){
-				newBallPosition = newBallPosition - stepBack;
-				if (newBallPosition.z <= tableLength - ballRadius){
-					//std::cout << "moved back from wall " << i << "  times, new distance is(the closer to 5.2 the better) :"
-					//	<< glm::distance(newBallPosition, (*ball)->ballPosition) << "\n";
+				newBallPosition = newBallPosition - (stepBack*2.0f);
+				if (abs(newBallPosition.z) <= tableLength - ballRadius){
 					(*ball)->matrix = glm::translate((*ball)->matrix, (newBallPosition - (*ball)->ballPosition));
 					(*ball)->ballPosition = newBallPosition;
 					break;

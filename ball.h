@@ -27,7 +27,7 @@ public:
 	glm::mat4 MVP;	
 
 
-	Ball();
+
 	Ball(int id, glm::vec3 ballPosition);
 	~Ball();
 

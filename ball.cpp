@@ -18,13 +18,6 @@ using namespace glm;
 
 
 
-Ball::Ball()
-{
-	id = 10;
-	movementVector = glm::vec3(0, 0, 0);
-	ballPosition = glm::vec3(0, 0, 0);
-}
-
 Ball::Ball(int ballID, glm::vec3 position)
 {
 	id = ballID;
