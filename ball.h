@@ -1,8 +1,8 @@
 #ifndef BALL_H
 #define BALL_H
 
-const int space = 30;
-const int VertexCount = (90 / space) * (360 / space) * 4*3*2; //4 quaters 3 - num of positions per vert, 2-halves of ball
+const int sides = 30;//has to be dividor of 90 so 10 30 45
+const int VertexCount = (90 / sides) * (360 / sides) * 4*3*2; //4 quaters 3 - num of positions per vert, 2-halves of ball
 
 class Ball
 {
@@ -36,7 +36,7 @@ public:
 };
 
 
-void CreateSphere(double R, double H, double K, double Z, GLfloat vertex_buffer_data[VertexCount], GLfloat color_buffer_data[VertexCount], float red, float green, float blue);
+void CreateSphere(double radius, GLfloat vertex_buffer_data[VertexCount], GLfloat color_buffer_data[VertexCount], float red, float green, float blue);
 
 
 #endif

@@ -3,7 +3,7 @@
 #include "ball.h"
 
 void computeCameraMatricesFromInputs();
-glm::vec3 computeMovFromInput();
+glm::vec3 checkStart();
 glm::mat4 getProjectionMatrix();
 glm::mat4 getViewMatrix();
 void castRay();

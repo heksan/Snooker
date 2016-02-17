@@ -20,17 +20,15 @@ using namespace glm;
 
 
 void createBuffer(Table& table){
-	
+
 	glGenBuffers(1, &table.vertexbufferTable);
 	glBindBuffer(GL_ARRAY_BUFFER, table.vertexbufferTable);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(table.vertex_buffer_data_table), table.vertex_buffer_data_table, GL_STATIC_DRAW);
-	
+
 	glGenBuffers(1, &table.colorbufferTable);
 	glBindBuffer(GL_ARRAY_BUFFER, table.colorbufferTable);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(table.color_buffer_data_table), table.color_buffer_data_table, GL_STATIC_DRAW);
 }
-
-
 
 void createBuffer(Ball& ball){
 	glGenBuffers(1, &ball.vertexbuffer);
@@ -47,7 +45,7 @@ void createBuffer(Ball& ball){
 
 void createBuffers(std::list<Ball*> listOfBalls){
 	for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
-		
+
 		glGenBuffers(1, &(*currentBall)->vertexbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, (*currentBall)->vertexbuffer);
 		glBufferData(GL_ARRAY_BUFFER, sizeof((*currentBall)->vertex_buffer_data), (*currentBall)->vertex_buffer_data, GL_STATIC_DRAW);
@@ -56,20 +54,10 @@ void createBuffers(std::list<Ball*> listOfBalls){
 		glBindBuffer(GL_ARRAY_BUFFER, (*currentBall)->colorbuffer);
 		glBufferData(GL_ARRAY_BUFFER, sizeof((*currentBall)->color_buffer_data), (*currentBall)->color_buffer_data, GL_STATIC_DRAW);
 
-		
-	}	
+
+	}
 
 }
-
-
-
-
-
-
-
-
-
-
 
 void drawBall(Ball ball, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix){
 
@@ -87,7 +75,6 @@ void drawBall(Ball ball, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 Projec
 		(void*)0            // array buffer offset
 		);
 
-	// 2nd attribute buffer : colors
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, ball.colorbuffer);
 	glVertexAttribPointer(
@@ -99,7 +86,7 @@ void drawBall(Ball ball, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 Projec
 		(void*)0                          // array buffer offset
 		);
 
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, ball.noVertices/3 ); 
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, ball.noVertices / 3);
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
@@ -112,34 +99,16 @@ void drawBalls(std::list<Ball*> listOfBalls, GLuint MatrixID, glm::mat4 ViewMatr
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &(*currentBall)->MVP[0][0]);
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, (*currentBall)->vertexbuffer);
-		glVertexAttribPointer(
-			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-			);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-		// 2nd attribute buffer : colors
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, (*currentBall)->colorbuffer);
-		glVertexAttribPointer(
-			1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-			3,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			0,                                // stride
-			(void*)0                          // array buffer offset
-			);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, (*currentBall)->noVertices/3);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, (*currentBall)->noVertices / 3);
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
-
-
 	}
 
 }
@@ -151,32 +120,21 @@ void drawTable(Table table, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 Pro
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &table.MVP[0][0]);
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, table.vertexbufferTable);
-	glVertexAttribPointer(
-		0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
-		3,                  // size
-		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
-		0,                  // stride
-		(void*)0            // array buffer offset
-		);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-	// 2nd attribute buffer : colors
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, table.colorbufferTable);
-	glVertexAttribPointer(
-		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-		3,                                // size
-		GL_FLOAT,                         // type
-		GL_FALSE,                         // normalized?
-		0,                                // stride
-		(void*)0                          // array buffer offset
-		);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3*2);
+	glDrawArrays(GL_TRIANGLES, 0, 3 * 2);
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+}
 
-
-
+void cleanupBuffers(std::list<Ball*> listOfBalls){
+	for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
+		glDeleteBuffers(1, &(*currentBall)->vertexbuffer);
+		glDeleteBuffers(1, &(*currentBall)->colorbuffer);
+	}
 }

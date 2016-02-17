@@ -10,13 +10,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
-
-
 #include "ball.h"
-
-
-
-
 
 Ball::Ball(int ballID, glm::vec3 position)
 {
@@ -34,10 +28,7 @@ Ball::Ball(int ballID, glm::vec3 position)
 		green = 0.0f;
 		blue = 0.0f;
 	}
-
-	//std::cout << red;
-	CreateSphere(2.6, 0, 0, 0,vertex_buffer_data ,color_buffer_data,red,green,blue );
-
+	CreateSphere(2.6f, vertex_buffer_data, color_buffer_data, red, green, blue);
 }
 
 Ball::~Ball()
@@ -45,140 +36,66 @@ Ball::~Ball()
 }
 
 
-void CreateSphere(double R, double H, double K, double Z, GLfloat vertex_buffer_data[VertexCount], GLfloat color_buffer_data[VertexCount], float red, float green, float blue) {
+void CreateSphere(double radius, GLfloat vertex_buffer_data[VertexCount], GLfloat color_buffer_data[VertexCount], float red, float green, float blue) {
+	//borrowed and changed from http ://www.swiftless.com/tutorials/opengl/sphere.html
 
+	int n = 0;
+	for (double latitude = 0; latitude <= 90 - sides; latitude += sides){
+		for (double longtitude = 0; longtitude <= 360 - sides; longtitude += sides){
 
-
-	int n;
-
-	double a;
-
-	double b;
-
-
-
-	n = 0;
-	for (b = 0; b <= 90 - space; b += space){
-		for (a = 0; a <= 360 - space; a += space){
-			vertex_buffer_data [n] = R * sin((a) / 180 * M_PI) * sin((b) / 180 * M_PI) - H;
-			color_buffer_data [n] = red;
-			n++;
-			vertex_buffer_data [n] = R * cos((a) / 180 * M_PI) * sin((b) / 180 * M_PI) + K;
-			color_buffer_data [n] = green;
-			n++;
-			vertex_buffer_data [n] = R * cos((b) / 180 * M_PI) - Z;
-			color_buffer_data [n] = blue;
-			n++;
-
-
-
-			vertex_buffer_data [n] = R * sin((a) / 180 * M_PI) * sin((b + space) / 180 * M_PI) - H;
-			color_buffer_data [n] = red;
-			n++;
-			vertex_buffer_data [n] = R * cos((a) / 180 * M_PI) * sin((b + space) / 180 * M_PI) + K;
-			color_buffer_data [n] = green;
-			n++;
-			vertex_buffer_data [n] = R * cos((b + space) / 180 * M_PI) - Z;
-			color_buffer_data [n] = blue;
-			n++;
-
-
-
-			vertex_buffer_data [n] = R * sin((a + space) / 180 * M_PI) * sin((b) / 180 * M_PI) - H;
-			color_buffer_data [n] = red;
-			n++;
-			vertex_buffer_data [n] = R * cos((a + space) / 180 * M_PI) * sin((b) / 180 * M_PI) + K;
-			color_buffer_data[n] = green;
-			n++;
-			vertex_buffer_data [n] = R * cos((b) / 180 * M_PI) - Z;
-			color_buffer_data[n] = blue;
-			n++;
-
-
-
-			vertex_buffer_data [n] = R * sin((a + space) / 180 * M_PI) * sin((b + space) / 180 * M_PI) - H;
+			//1st quarter
+			vertex_buffer_data[n] = float(radius * sin((longtitude) / 180.0f * M_PI) * sin((latitude) / 180.0f * M_PI));
 			color_buffer_data[n] = red;
 			n++;
-			vertex_buffer_data [n] = R * cos((a + space) / 180 * M_PI) * sin((b + space) / 180 * M_PI) + K;
+			vertex_buffer_data[n] = float(radius * cos((longtitude) / 180.0f * M_PI) * sin((latitude) / 180.0f * M_PI));
 			color_buffer_data[n] = green;
 			n++;
-			vertex_buffer_data [n] = R * cos((b + space) / 180 * M_PI) - Z;
+			vertex_buffer_data[n] = float(radius * cos((latitude) / 180.0f * M_PI));
 			color_buffer_data[n] = blue;
 			n++;
-
-
-
-		}
-
-	}
-	/*for (int m = 0; m <= 1296; m++){
-		vertex_buffer_data [m + 1296] = vertex_buffer_data [1296-m];
-		color_buffer_data [m + 1296] = color_buffer_data [1296 - m];
-		std::cout << vertex_buffer_data [1296-m];
-		m++;
-		vertex_buffer_data [m + 1296] = vertex_buffer_data [1296 - m];
-		color_buffer_data [m + 1296] = color_buffer_data [1296 - m];
-		m++;
-		vertex_buffer_data [m + 1296] = -vertex_buffer_data [1296 - m]; //should be Z = -Z
-		color_buffer_data [m + 1296] = color_buffer_data [1296 - m];
-		
-
-	}*/
-
-	for (b = 0; b <= 90 - space; b += space){
-		for (a = 0; a <= 360 - space; a += space){
-			vertex_buffer_data [n] = R * sin((a) / 180 * M_PI) * sin((b) / 180 * M_PI) - H;
+			//2nd quarter
+			vertex_buffer_data[n] = float(radius * sin((longtitude) / 180.0f * M_PI) * sin((latitude + sides) / 180.0f * M_PI));
 			color_buffer_data[n] = red;
 			n++;
-			vertex_buffer_data [n] = R * cos((a) / 180 * M_PI) * sin((b) / 180 * M_PI) + K;
+			vertex_buffer_data[n] = float(radius * cos((longtitude) / 180.0f * M_PI) * sin((latitude + sides) / 180.0f * M_PI));
 			color_buffer_data[n] = green;
 			n++;
-			vertex_buffer_data [n] = -R * cos((b) / 180 * M_PI) - Z;
+			vertex_buffer_data[n] =float(radius * cos((latitude + sides) / 180.0f * M_PI));
 			color_buffer_data[n] = blue;
 			n++;
-
-
-
-			vertex_buffer_data [n] = R * sin((a) / 180 * M_PI) * sin((b + space) / 180 * M_PI) - H;
+			//3rd
+			vertex_buffer_data[n] = float(radius * sin((longtitude + sides) / 180.0f * M_PI) * sin((latitude) / 180.0f * M_PI));
 			color_buffer_data[n] = red;
 			n++;
-			vertex_buffer_data [n] = R * cos((a) / 180 * M_PI) * sin((b + space) / 180 * M_PI) + K;
+			vertex_buffer_data[n] = float(radius * cos((longtitude + sides) / 180.0f * M_PI) * sin((latitude) / 180.0f * M_PI));
 			color_buffer_data[n] = green;
 			n++;
-			vertex_buffer_data [n] = -R * cos((b + space) / 180 * M_PI) - Z;
+			vertex_buffer_data[n] = float(radius * cos((latitude) / 180.0f * M_PI));
 			color_buffer_data[n] = blue;
 			n++;
-
-
-
-			vertex_buffer_data [n] = R * sin((a + space) / 180 * M_PI) * sin((b) / 180 * M_PI) - H;
+			//4th
+			vertex_buffer_data[n] = float(radius * sin((longtitude + sides) / 180.0f * M_PI) * sin((latitude + sides) / 180.0f * M_PI));
 			color_buffer_data[n] = red;
 			n++;
-			vertex_buffer_data [n] = R * cos((a + space) / 180 * M_PI) * sin((b) / 180 * M_PI) + K;
+			vertex_buffer_data[n] = float(radius * cos((longtitude + sides) / 180.0f * M_PI) * sin((latitude + sides) / 180.0f * M_PI));
 			color_buffer_data[n] = green;
 			n++;
-			vertex_buffer_data [n] =- R * cos((b) / 180 * M_PI) - Z;
+			vertex_buffer_data[n] = float(radius * cos((latitude + sides) / 180.0f * M_PI));
 			color_buffer_data[n] = blue;
 			n++;
-
-
-
-			vertex_buffer_data [n] = R * sin((a + space) / 180 * M_PI) * sin((b + space) / 180 * M_PI) - H;
-			color_buffer_data[n] = red;
-			n++;
-			vertex_buffer_data [n] = R * cos((a + space) / 180 * M_PI) * sin((b + space) / 180 * M_PI) + K;
-			color_buffer_data[n] = green;
-			n++;
-			vertex_buffer_data [n] = -R * cos((b + space) / 180 * M_PI) - Z;
-			color_buffer_data[n] = blue;
-			n++;
-
-
 
 		}
 
 	}
 
-
+	//rewrite second half
+	for (int m = 0; m < VertexCount / 2; m += 3){
+		vertex_buffer_data[m + (VertexCount / 2)] = vertex_buffer_data[m];
+		color_buffer_data[m + (VertexCount / 2)] = color_buffer_data[m];
+		vertex_buffer_data[m + (VertexCount / 2) + 1] = vertex_buffer_data[m + 1];
+		color_buffer_data[m + (VertexCount / 2) + 1] = color_buffer_data[m + 1];
+		vertex_buffer_data[m + (VertexCount / 2) + 2] = -vertex_buffer_data[m + 2]; //should be Z = -Z
+		color_buffer_data[m + (VertexCount / 2) + 2] = color_buffer_data[m + 2];
+	}
 }
 

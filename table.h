@@ -16,9 +16,6 @@ public:
 	GLuint colorbufferTable;
 	glm::mat4 matrix;
 	glm::mat4 MVP;
-
-
-
 	Table();
 
 };

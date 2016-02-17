@@ -5,17 +5,14 @@
 #include <list>
 // Include GLEW
 #include <GL/glew.h>
-
 // Include GLFW
 #include <GLFW/glfw3.h>
-GLFWwindow* window;
-bool stable = true;
-double speedVec = 1.0;
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
+//include everything else
 #include <shader.h>
 #include <controls.h>
 #include "gameEngine.h"
@@ -23,12 +20,22 @@ using namespace glm;
 #include "ball.h"
 #include "table.h"
 
+
+GLFWwindow* window;
+bool stable = true;
+double speedVec = 1.0;
+
+
 int main(void)
 {
+	//init
+	glm::vec3 cameraPosition;//later will not used
+	glm::mat4 ProjectionMatrix;
+	glm::mat4 ViewMatrix;
+
+	//items and lists
 	std::list<Ball*> listOfBalls;
-
 	Table table;
-
 	Ball cueBall(0, glm::vec3(0, 0, 0));
 	Ball justBall(1, glm::vec3(6, 0, 6));
 	Ball justAnballTwo(2, glm::vec3(12, 0, 12));
@@ -47,13 +54,6 @@ int main(void)
 	//listOfBalls.push_back(&justAnballTwo3);
 	//listOfBalls.push_back(&verySpecialBall);
 
-
-	glm::vec3 rayOrigin;
-	glm::vec3 rayDirection;
-	glm::vec3 cameraPosition;
-
-
-
 	// Initialise GLFW
 	if (!glfwInit())
 	{
@@ -65,13 +65,12 @@ int main(void)
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// Open a window and create its OpenGL context
 	window = glfwCreateWindow(1024, 768, "Snooker Game", NULL, NULL);
 	if (window == NULL){
-		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
+		fprintf(stderr, "Failed\n");
 		getchar();
 		glfwTerminate();
 		return -1;
@@ -81,7 +80,7 @@ int main(void)
 	// Initialize GLEW
 	glewExperimental = true; // Needed for core profile
 	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Failed to initialize GLEW\n");
+		fprintf(stderr, "Failed GLEW\n");
 		getchar();
 		glfwTerminate();
 		return -1;
@@ -108,35 +107,8 @@ int main(void)
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP"); //apparently only this is used
 
-	glm::mat4 ProjectionMatrix;
-	glm::mat4 ViewMatrix;
-
-
-	///////init floor//////////////////////
-	static const GLfloat g_vertex_buffer_data_t[] = {
-		-89.0f, -2.6f, -178.5f,
-		-89.0f, -2.6f, 178.5f,
-		89.0f, -2.6f, 178.5f,
-		-89.0f, -2.6f, -178.5f,
-		89.0f, -2.6f, -178.5f,
-		89.0f, -2.6f, 178.5f,
-	};
-
-	//floor colour
-	static const GLfloat g_color_buffer_data_t[] = {
-		0.4f, 1.0f, 0.4f,
-		0.4f, 1.0f, 0.4f,
-		0.4f, 1.0f, 0.4f,
-		0.4f, 1.0f, 0.4f,
-		0.4f, 1.0f, 0.4f,
-		0.4f, 1.0f, 0.4f,
-	};
-	
-
 	createBuffer(table);
 	createBuffers(listOfBalls);
-
-
 	relocateMatrices(listOfBalls);
 
 
@@ -144,8 +116,7 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(programID);
 
-
-		//Main game loop
+		//Main game loop//
 		if (!stable){
 			checkStop(listOfBalls);
 			stable = checkStable(listOfBalls);
@@ -155,10 +126,10 @@ int main(void)
 			castRay();
 		}
 		else{
-			cameraPosition = computeMovFromInput();//sets stable to false
-
-			initMovement(6.0f, cameraPosition, cueBall.ballPosition, cueBall.movementVector,cueBall.deceleration);//later force from gUI
+			cameraPosition = checkStart();
+			initMovement(6.0f, cameraPosition, cueBall.ballPosition, cueBall.movementVector, cueBall.deceleration);
 		}
+		////end/////
 
 		computeCameraMatricesFromInputs();
 		ProjectionMatrix = getProjectionMatrix();
@@ -167,26 +138,18 @@ int main(void)
 		drawBalls(listOfBalls, MatrixID, ViewMatrix, ProjectionMatrix);
 		drawTable(table, MatrixID, ViewMatrix, ProjectionMatrix);
 
-		// Swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 		glfwSwapInterval(1);
-		
 
-	} // Check if the ESC key was pressed or the window was closed
-	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-	glfwWindowShouldClose(window) == 0);
 
-	// Cleanup VBO and shader/////////////////////////////////////////////////fix
-	//cleanup(listOfBalls);
-	glDeleteBuffers(1, &cueBall.vertexbuffer);
-	glDeleteBuffers(1, &cueBall.colorbuffer);
+	} while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
+
+
+	cleanupBuffers(listOfBalls);
 	glDeleteProgram(programID);
 	glDeleteVertexArrays(1, &VertexArrayID);
-
-	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
-
 	return 0;
 }
 
@@ -200,14 +163,9 @@ int main(void)
 //
 // 
 /// cue stick
-// fix controls(fixed ish)
+// fix controls
 // fix ball.cpp speghetti
 // if dist ball to ball < one movement =hit
-// ballmovement-x rahter than *0.xxx
-// fix cleanup glDeleteBuffers(1, &cueBall.vertexbuffer);
-// glDeleteBuffers(1, &cueBall.colorbuffer);
-// glDeleteProgram(programID);
-// glDeleteVertexArrays(1, &VertexArrayID);
 //make different collor buffer datas depending on IDs
 //
 //delete pointers when  in pocket - oh right, make pockets ffs

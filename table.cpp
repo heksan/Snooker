@@ -39,10 +39,8 @@ Table::Table()
 		vertex_buffer_data_table[i] = vertex_buffer_data_table_g[i];
 		color_buffer_data_table[i] = color_buffer_data_table_g[i];
 	};
-
-
-	
 	glm::mat4 matrix = glm::mat4(1.0);
+
 }
 
 
