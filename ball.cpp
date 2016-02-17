@@ -35,7 +35,7 @@ Ball::Ball(int ballID, glm::vec3 position)
 		blue = 0.0f;
 	}
 
-	std::cout << red;
+	//std::cout << red;
 	CreateSphere(2.6, 0, 0, 0,vertex_buffer_data ,color_buffer_data,red,green,blue );
 
 }

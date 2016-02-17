@@ -30,18 +30,22 @@ int main(void)
 	Table table;
 
 	Ball cueBall(0, glm::vec3(0, 0, 0));
-	Ball justBall(1, glm::vec3(40, 0, 40));
-	Ball justAnballTwo(2, glm::vec3(20, 0, 20));
-	Ball justAnballTwo2(3, glm::vec3(20, 0, 0));
-	Ball justAnballTwo3(4, glm::vec3(0, 0, 20));
-	Ball verySpecialBall(5, glm::vec3(60, 0, 60));
+	Ball justBall(1, glm::vec3(6, 0, 6));
+	Ball justAnballTwo(2, glm::vec3(12, 0, 12));
+	//Ball justAnballTwo2(3, glm::vec3(18, 0, 18));
+	//Ball justAnballTwo3(4, glm::vec3(20, 0, 30));
+	//Ball justAnballTwo4(5, glm::vec3(20, 0,20));
+	//Ball justAnballTwo5(6, glm::vec3(0, 0, 20));
+	//Ball justAnballTwo6(7, glm::vec3(20, 0, 0));
+	//Ball justAnballTwo7(8, glm::vec3(0, 0, -20));
+	//Ball verySpecialBall(9, glm::vec3(60, 0, 60));
 
 	listOfBalls.push_back(&cueBall);
 	listOfBalls.push_back(&justBall);
 	listOfBalls.push_back(&justAnballTwo);
-	listOfBalls.push_back(&justAnballTwo2);
-	listOfBalls.push_back(&justAnballTwo3);
-	listOfBalls.push_back(&verySpecialBall);
+	//listOfBalls.push_back(&justAnballTwo2);
+	//listOfBalls.push_back(&justAnballTwo3);
+	//listOfBalls.push_back(&verySpecialBall);
 
 
 	glm::vec3 rayOrigin;
@@ -104,16 +108,8 @@ int main(void)
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP"); //apparently only this is used
 
-	//GLuint MatrixID_t = glGetUniformLocation(programID, "MVP");
-
-	// Projection matrix :60° Field of View, 4:3 ratio, display range : 0.1 unit <-> 500 units
-	glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 500.0f);
-	// Camera matrix
-	glm::mat4 View = glm::lookAt(
-		glm::vec3(4, 3, -3), // Camera is at (4,3,-3), in World Space
-		glm::vec3(0, 0, 0), // and looks at the origin
-		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-		);
+	glm::mat4 ProjectionMatrix;
+	glm::mat4 ViewMatrix;
 
 
 	///////init floor//////////////////////
@@ -151,21 +147,22 @@ int main(void)
 
 		//Main game loop
 		if (!stable){
+			checkStop(listOfBalls);
 			stable = checkStable(listOfBalls);
-			moveBalls(listOfBalls);
 			checkWallCollisions(listOfBalls);
 			checkBallCollisions(listOfBalls);
+			moveBalls(listOfBalls);
 			castRay();
 		}
 		else{
 			cameraPosition = computeMovFromInput();//sets stable to false
 
-			initMovement(6.0f, cameraPosition, cueBall.ballPosition, cueBall.movementVector);//later force from gUI
+			initMovement(6.0f, cameraPosition, cueBall.ballPosition, cueBall.movementVector,cueBall.deceleration);//later force from gUI
 		}
 
 		computeCameraMatricesFromInputs();
-		glm::mat4 ProjectionMatrix = getProjectionMatrix();
-		glm::mat4 ViewMatrix = getViewMatrix();
+		ProjectionMatrix = getProjectionMatrix();
+		ViewMatrix = getViewMatrix();
 
 		drawBalls(listOfBalls, MatrixID, ViewMatrix, ProjectionMatrix);
 		drawTable(table, MatrixID, ViewMatrix, ProjectionMatrix);
@@ -181,6 +178,7 @@ int main(void)
 	glfwWindowShouldClose(window) == 0);
 
 	// Cleanup VBO and shader/////////////////////////////////////////////////fix
+	//cleanup(listOfBalls);
 	glDeleteBuffers(1, &cueBall.vertexbuffer);
 	glDeleteBuffers(1, &cueBall.colorbuffer);
 	glDeleteProgram(programID);
@@ -198,13 +196,13 @@ int main(void)
 //      REFACTOR BITCH
 //
 //
-//fix wall collisions
-//change fov, update controls
+//
+//
 // 
 /// cue stick
 // fix controls(fixed ish)
 // fix ball.cpp speghetti
-//, 
+// if dist ball to ball < one movement =hit
 // ballmovement-x rahter than *0.xxx
 // fix cleanup glDeleteBuffers(1, &cueBall.vertexbuffer);
 // glDeleteBuffers(1, &cueBall.colorbuffer);

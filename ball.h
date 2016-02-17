@@ -17,6 +17,7 @@ public:
 	float blue;
 	int id;
 	int noVertices = VertexCount;
+	glm::vec3 deceleration = glm::vec3(0.0f,0.0f,0.0f);
 	glm::vec3 ballPosition;
 	GLfloat vertex_buffer_data[VertexCount];
 	GLfloat color_buffer_data[VertexCount];
