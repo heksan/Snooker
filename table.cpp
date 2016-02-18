@@ -12,7 +12,7 @@ using namespace glm;
 
 #include "table.h"
 
-GLfloat vertex_buffer_data_table_g[] = {
+GLfloat vertex_buffer_data_table_g[] = {//delete this g
 	-89.0f, -2.6f, -178.5f,
 	-89.0f, -2.6f, 178.5f,
 	89.0f, -2.6f, 178.5f,

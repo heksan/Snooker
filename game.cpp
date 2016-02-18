@@ -19,10 +19,12 @@ using namespace glm;
 #include "graphicsEngine.h"
 #include "ball.h"
 #include "table.h"
+#include "cueStick.h"
 
 
 GLFWwindow* window;
-bool stable = true;
+bool ballsMoving = false;
+bool cueStickMoving = false;
 double speedVec = 1.0;
 
 
@@ -36,6 +38,7 @@ int main(void)
 	//items and lists
 	std::list<Ball*> listOfBalls;
 	Table table;
+	CueStick cueStick;
 	Ball cueBall(0, glm::vec3(0, 0, 0));
 	Ball justBall(1, glm::vec3(6, 0, 6));
 	Ball justAnballTwo(2, glm::vec3(12, 0, 12));
@@ -53,6 +56,8 @@ int main(void)
 	//listOfBalls.push_back(&justAnballTwo2);
 	//listOfBalls.push_back(&justAnballTwo3);
 	//listOfBalls.push_back(&verySpecialBall);
+
+	glm::vec2 mouseRay;
 
 	// Initialise GLFW
 	if (!glfwInit())
@@ -108,33 +113,51 @@ int main(void)
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP"); //apparently only this is used
 
 	createBuffer(table);
+	createBuffer(cueStick);
 	createBuffers(listOfBalls);
 	relocateMatrices(listOfBalls);
+	
+
+	
+
 
 
 	do{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(programID);
 
-		//Main game loop//
-		if (!stable){
-			checkStop(listOfBalls);
-			stable = checkStable(listOfBalls);
-			checkWallCollisions(listOfBalls);
-			checkBallCollisions(listOfBalls);
-			moveBalls(listOfBalls);
-			castRay();
-		}
-		else{
-			cameraPosition = checkStart();
-			initMovement(6.0f, cameraPosition, cueBall.ballPosition, cueBall.movementVector, cueBall.deceleration);
-		}
-		////end/////
-
 		computeCameraMatricesFromInputs();
 		ProjectionMatrix = getProjectionMatrix();
 		ViewMatrix = getViewMatrix();
 
+
+		//Main game loop//
+
+		if (ballsMoving){
+			checkStop(listOfBalls);
+			ballsMoving = checkStable(listOfBalls);
+			checkWallCollisions(listOfBalls);
+			checkBallCollisions(listOfBalls);
+			moveBalls(listOfBalls);
+			
+		}
+		if (cueStickMoving){
+			//drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
+			ballsMoving = true;
+			cueStickMoving = false;
+			//moveCueStick(cueStick,6.0f);
+		}
+		if(!ballsMoving){//carefull for double drawing, game starts from here
+			mouseRay = castRayThroughMouse();
+			relocateCueStick(mouseRay,cueStick,cueBall);
+			checkStart(cueStickMoving);
+			initMovement(6.0f, mouseRay, cueBall);//move to movecuestick
+			drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
+		}
+		
+		////end//////
+		
+		
 		drawBalls(listOfBalls, MatrixID, ViewMatrix, ProjectionMatrix);
 		drawTable(table, MatrixID, ViewMatrix, ProjectionMatrix);
 
@@ -164,8 +187,8 @@ int main(void)
 // 
 /// cue stick
 // fix controls
-// fix ball.cpp speghetti
-// if dist ball to ball < one movement =hit
+// 
+//
 //make different collor buffer datas depending on IDs
 //
 //delete pointers when  in pocket - oh right, make pockets ffs

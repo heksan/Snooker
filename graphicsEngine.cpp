@@ -30,6 +30,17 @@ void createBuffer(Table& table){
 	glBufferData(GL_ARRAY_BUFFER, sizeof(table.color_buffer_data_table), table.color_buffer_data_table, GL_STATIC_DRAW);
 }
 
+void createBuffer(CueStick& cueStick){
+
+	glGenBuffers(1, &cueStick.vertexbufferStick);
+	glBindBuffer(GL_ARRAY_BUFFER, cueStick.vertexbufferStick);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cueStick.vertex_buffer_data_stick), cueStick.vertex_buffer_data_stick, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &cueStick.colorbufferStick);
+	glBindBuffer(GL_ARRAY_BUFFER, cueStick.colorbufferStick);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cueStick.color_buffer_data_stick), cueStick.color_buffer_data_stick, GL_STATIC_DRAW);
+}
+
 void createBuffer(Ball& ball){
 	glGenBuffers(1, &ball.vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, ball.vertexbuffer);
@@ -124,6 +135,25 @@ void drawTable(Table table, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 Pro
 
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, table.colorbufferTable);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	glDrawArrays(GL_TRIANGLES, 0, 3 * 2);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+}
+
+void drawCueStick(CueStick cueStick, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix){
+
+
+	cueStick.MVP = ProjectionMatrix * ViewMatrix * cueStick.matrix;
+	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &cueStick.MVP[0][0]);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, cueStick.vertexbufferStick);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, cueStick.colorbufferStick);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3 * 2);

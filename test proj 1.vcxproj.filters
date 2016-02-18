@@ -42,6 +42,9 @@
     <ClCompile Include="table.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cueStick.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -60,6 +63,9 @@
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="table.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cueStick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

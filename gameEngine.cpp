@@ -12,6 +12,7 @@ extern bool stable;
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
+#include <glm/gtx/transform.hpp>
 using namespace glm;
 
 #include "gameEngine.h"
@@ -46,13 +47,13 @@ void moveBalls(std::list<Ball*> listOfBalls){
 }
 
 //Used to set initial movementVector and deceleration to cueBall,
-//movementVector is currently based on camera position (later from position on x/z plane based on ray from camera)
-void initMovement(float speedVec, glm::vec3 cameraPosition, glm::vec3 ballPosition, glm::vec3& movementVector, glm::vec3& deceleration){
+//movementVector is currently based on mouse position 
+void initMovement(float speedVec, glm::vec2 mouseRay, Ball& ball){
 
-	double angle = atan2(cameraPosition.x - ballPosition.x, cameraPosition.z - ballPosition.z);
-	movementVector = glm::vec3(sin(angle + M_PI), 0, cos(angle + M_PI));
-	movementVector = movementVector * speedVec;
-	deceleration = glm::normalize(movementVector)*decelerationRate;
+	double angle = atan2(mouseRay.x - ball.ballPosition.x, mouseRay.y - ball.ballPosition.z);
+	ball.movementVector = glm::vec3(sin(angle + M_PI), 0, cos(angle + M_PI));
+	ball.movementVector = ball.movementVector * speedVec;
+	ball.deceleration = glm::normalize(ball.movementVector)*decelerationRate;
 }
 
 
@@ -65,11 +66,11 @@ bool checkStable(std::list<Ball*> listOfBalls){
 
 	for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
 		if (glm::length((*currentBall)->movementVector) != 0){
-			return false;
+			return true;
 		}
 	}
 	std::cout << "stable \n";
-	return true;
+	return false;
 }
 
 //Iterates through all balls, if angle between balls movementVector and deceleration is larger than 0,
@@ -274,4 +275,31 @@ void changeDirection(Ball* ball, char xORz){
 //self explanatory
 void recalculateDeceleration(Ball* ball){
 	(ball)->deceleration = glm::normalize((ball)->movementVector)*decelerationRate;
+}
+
+void relocateCueStick(glm::vec2 mouseRay, CueStick& cueStick, Ball cueball){
+	float angleBallMouse = atan2(cueball.ballPosition.x-mouseRay.x,cueball.ballPosition.z - mouseRay.y);
+	//trace back to zero
+	moveStickToOrigin(cueStick);
+	//translate to ball,rotate with mouse angle, translate by some value so stick points at the ball
+	cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(cueball.ballPosition.x, 0.0f, cueball.ballPosition.z));
+	cueStick.matrix = glm::rotate(cueStick.matrix, angleBallMouse, glm::vec3(0.0f, 1.0f, 0.0f));
+	cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, -cueStick.displacement ));
+	
+	cueStick.position = glm::vec3(cueball.ballPosition.x, 0.0f, cueball.ballPosition.z);
+	cueStick.rotation = angleBallMouse;
+	
+
+}
+
+void moveStickToOrigin(CueStick& cueStick){
+	cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, cueStick.displacement));
+	cueStick.matrix = glm::rotate(cueStick.matrix, -cueStick.rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+	cueStick.matrix = glm::translate(cueStick.matrix, -cueStick.position);//goes to 0,0
+}
+void moveCueStick(CueStick& cueStick, float force){
+
+	cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f,0.0f,-0.1f*force));
+	//cueStick.position = cueStick.position + glm::vec3(0.0f, 0.0f, 0.1f*force);
+
 }

@@ -4,7 +4,6 @@
 #include <list>
 #define _USE_MATH_DEFINES
 #include <math.h>
-extern bool stable; //and this
 extern GLFWwindow* window;  //fix this hack
 
 // Include GLM
@@ -13,7 +12,6 @@ extern GLFWwindow* window;  //fix this hack
 using namespace glm;
 
 #include "controls.h"
-#include "ball.h"
 #include "gameEngine.h"
 const double screenWidth = 1024;
 const double screenHeight = 768;
@@ -41,16 +39,11 @@ glm::mat4 getProjectionMatrix(){
 	return ProjectionMatrix;
 }
 
-glm::vec3 checkStart(){
+void checkStart(bool& cueStickMoving){
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS){
-		stable = false;
-		return position;
+		cueStickMoving = true;
 	}
-	else{
-		return position;
-	}
-
 }
 
 void computeCameraMatricesFromInputs(){
@@ -109,7 +102,7 @@ void computeCameraMatricesFromInputs(){
 }
 
 //returns 2d point (x,z) where ray intersects with y=0 plane - not finished
-void castRay(){
+glm::vec2 castRayThroughMouse(){
 
 	float x = (2.0f * xpos) / screenWidth - 1.0;
 	float y = 1.0f - (2.0f * ypos) / screenHeight;
@@ -120,12 +113,13 @@ void castRay(){
 	glm::vec3 rayDir = glm::vec3(a.x, a.y, a.z);
 	rayDir = glm::normalize(rayDir);
 
+	// go from camera with direction of ray and check if intercests with table
 	glm::vec3 currentPos = position;
-	for (int i = 0; i < 300; i++){
+	for (int i = 0; i < 600; i++){
 		currentPos = currentPos + rayDir;
 		if (currentPos.y < 0.0){
-			//std::cout << "plane hit in " << currentPos.x << "," << currentPos.z << "\n";
-			break;
+			return glm::vec2(currentPos.x, currentPos.z);
 		}
 	}
+	return glm::vec2(0.0f, 0.0f);
 }

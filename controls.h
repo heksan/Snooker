@@ -3,8 +3,8 @@
 #include "ball.h"
 
 void computeCameraMatricesFromInputs();
-glm::vec3 checkStart();
+void checkStart(bool& cueStickMoving);
 glm::mat4 getProjectionMatrix();
 glm::mat4 getViewMatrix();
-void castRay();
+glm::vec2 castRayThroughMouse();
 #endif
