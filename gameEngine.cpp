@@ -287,6 +287,7 @@ void relocateCueStick(glm::vec2 mouseRay, CueStick& cueStick, Ball cueball){
 	cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, -cueStick.displacement ));
 	
 	cueStick.position = glm::vec3(cueball.ballPosition.x, 0.0f, cueball.ballPosition.z);
+	cueStick.temporaryPosition = cueStick.position;
 	cueStick.rotation = angleBallMouse;
 	
 
@@ -297,9 +298,30 @@ void moveStickToOrigin(CueStick& cueStick){
 	cueStick.matrix = glm::rotate(cueStick.matrix, -cueStick.rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 	cueStick.matrix = glm::translate(cueStick.matrix, -cueStick.position);//goes to 0,0
 }
-void moveCueStick(CueStick& cueStick, float force){
 
-	cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f,0.0f,-0.1f*force));
+
+void moveCueStick(CueStick& cueStick, float force,bool& ballsMoving, bool& cueStickMoving){
+
+	if (!cueStick.accelerating){
+		cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, -0.1f*force));
+		cueStick.temporaryPosition = cueStick.temporaryPosition + glm::vec3(0.0f, 0.0f, -0.1f*force);
+		if (glm::distance(cueStick.position, cueStick.temporaryPosition) >= force*2.0f){
+			cueStick.accelerating = true;
+		}
+	}
+	else{
+		cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, 0.3f*force));
+		cueStick.temporaryPosition = cueStick.temporaryPosition + glm::vec3(0.0f, 0.0f, 0.3f*force);
+		std::cout << (cueStick.position.z - cueStick.temporaryPosition.z) << "\n";
+		if ((cueStick.position.z - cueStick.temporaryPosition.z) <= -7.0f){
+			cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, (cueStick.position.z - cueStick.temporaryPosition.z)));
+			cueStickMoving = false;
+			ballsMoving = true;
+			cueStick.accelerating = false;
+		}
+	}
+	
+	
 	//cueStick.position = cueStick.position + glm::vec3(0.0f, 0.0f, 0.1f*force);
 
 }

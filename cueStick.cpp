@@ -42,5 +42,7 @@ CueStick::CueStick()
 	glm::mat4 matrix = glm::mat4(1.0);
 	position = glm::vec3(0.0f,0.0f,displacement);
 	rotation = 0.0f;
+	temporaryPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+	accelerating = false;
 
 }

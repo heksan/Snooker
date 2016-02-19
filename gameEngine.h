@@ -20,7 +20,7 @@ void collideMoving(Ball *ballOne, Ball  *ballTwo);
 void changeDirection(Ball* ball, char xORz);
 void recalculateDeceleration(Ball* ball);
 void relocateCueStick(glm::vec2 mouseRay,CueStick& cueStick,Ball ball);
-void moveCueStick(CueStick& cueStick,float force);
+void moveCueStick(CueStick& cueStick,float force,bool& ballsMoving,bool& cueStickMoving);
 void moveStickToOrigin(CueStick& cueStick);
 
 #endif

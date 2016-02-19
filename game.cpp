@@ -132,7 +132,17 @@ int main(void)
 
 
 		//Main game loop//
-
+		if (!ballsMoving && !cueStickMoving){
+			mouseRay = castRayThroughMouse();
+			relocateCueStick(mouseRay, cueStick, cueBall);
+			checkStart(cueStickMoving);
+			initMovement(6.0f, mouseRay, cueBall);//gives cueBall initial vectors 
+			drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
+		}
+		if (cueStickMoving){
+			drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
+			moveCueStick(cueStick, 10.0f, ballsMoving, cueStickMoving);//when finished sets cueStickMoving to false and ballsMoving to true
+		}
 		if (ballsMoving){
 			checkStop(listOfBalls);
 			ballsMoving = checkStable(listOfBalls);
@@ -141,20 +151,8 @@ int main(void)
 			moveBalls(listOfBalls);
 			
 		}
-		if (cueStickMoving){
-			//drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
-			ballsMoving = true;
-			cueStickMoving = false;
-			//moveCueStick(cueStick,6.0f);
-		}
-		if(!ballsMoving){//carefull for double drawing, game starts from here
-			mouseRay = castRayThroughMouse();
-			relocateCueStick(mouseRay,cueStick,cueBall);
-			checkStart(cueStickMoving);
-			initMovement(6.0f, mouseRay, cueBall);//move to movecuestick
-			drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
-		}
 		
+
 		////end//////
 		
 		
@@ -187,7 +185,7 @@ int main(void)
 // 
 /// cue stick
 // fix controls
-// 
+// close balls dirs
 //
 //make different collor buffer datas depending on IDs
 //
