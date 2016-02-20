@@ -20,6 +20,7 @@ using namespace glm;
 #include "ball.h"
 #include "table.h"
 #include "cueStick.h"
+#include "pocket.h"
 
 
 GLFWwindow* window;
@@ -30,15 +31,19 @@ double speedVec = 1.0;
 
 int main(void)
 {
-	//init
+	//init matrices
 	glm::vec3 cameraPosition;//later will not used
+	glm::vec2 mouseRay;
 	glm::mat4 ProjectionMatrix;
 	glm::mat4 ViewMatrix;
 
-	//items and lists
-	std::list<Ball*> listOfBalls;
+
+	//table and stick
 	Table table;
 	CueStick cueStick;
+
+	//init balls and its list
+	std::list<Ball*> listOfBalls;
 	Ball cueBall(0, glm::vec3(0, 0, 0));
 	Ball justBall(1, glm::vec3(6, 0, 6));
 	Ball justAnballTwo(2, glm::vec3(12, 0, 12));
@@ -57,8 +62,22 @@ int main(void)
 	//listOfBalls.push_back(&justAnballTwo3);
 	//listOfBalls.push_back(&verySpecialBall);
 
-	glm::vec2 mouseRay;
+	//pockets
+	std::list<Pocket*> listOfPockets;
+	Pocket pocket1(glm::vec3(89.0f, 0.1f, 178.5f));
+	Pocket pocket2(glm::vec3(-89.0f, 0.1f, 178.5f));
+	Pocket pocket3(glm::vec3(89.0f, 0.1f, -178.5f));
+	Pocket pocket4(glm::vec3(-89.0f, 0.1f, -178.5f));
+	Pocket pocket5(glm::vec3(89.0f, 0.1f, 0.0f));
+	Pocket pocket6(glm::vec3(-89.0f, 0.1f, 0.0f));
 
+	listOfPockets.push_back(&pocket1);
+	listOfPockets.push_back(&pocket2);
+	listOfPockets.push_back(&pocket3);
+	listOfPockets.push_back(&pocket4);
+	listOfPockets.push_back(&pocket5);
+	listOfPockets.push_back(&pocket6);
+	
 	// Initialise GLFW
 	if (!glfwInit())
 	{
@@ -115,7 +134,9 @@ int main(void)
 	createBuffer(table);
 	createBuffer(cueStick);
 	createBuffers(listOfBalls);
+	createBuffers(listOfPockets);
 	relocateMatrices(listOfBalls);
+	relocateMatrices(listOfPockets);
 	
 
 	
@@ -158,6 +179,7 @@ int main(void)
 		
 		drawBalls(listOfBalls, MatrixID, ViewMatrix, ProjectionMatrix);
 		drawTable(table, MatrixID, ViewMatrix, ProjectionMatrix);
+		drawPockets(listOfPockets, MatrixID, ViewMatrix, ProjectionMatrix);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -182,8 +204,8 @@ int main(void)
 //
 //
 //
-// 
-/// cue stick
+// table can be static?
+///
 // fix controls
 // close balls dirs
 //

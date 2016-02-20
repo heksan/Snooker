@@ -74,6 +74,7 @@
   <ItemGroup>
     <ClCompile Include="ball.cpp" />
     <ClCompile Include="cueStick.cpp" />
+    <ClCompile Include="pocket.cpp" />
     <ClCompile Include="table.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="graphicsEngine.cpp" />
@@ -85,6 +86,7 @@
     <ClInclude Include="ball.h" />
     <ClInclude Include="controls.h" />
     <ClInclude Include="cueStick.h" />
+    <ClInclude Include="pocket.h" />
     <ClInclude Include="table.h" />
     <ClInclude Include="gameEngine.h" />
     <ClInclude Include="graphicsEngine.h" />

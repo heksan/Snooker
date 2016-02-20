@@ -3,6 +3,7 @@
 
 #include "ball.h"
 #include "cueStick.h"
+#include "pocket.h"
 
 glm::mat4 moveBall(Ball& ball);
 void moveBalls(std::list<Ball*> listOfBalls);
@@ -12,6 +13,7 @@ void checkStop(std::list<Ball*> listOfBalls);
 bool checkStable(Ball ball);
 void relocateMatrix(Ball& ball);
 void relocateMatrices(std::list<Ball*> listOfBalls);
+void relocateMatrices(std::list<Pocket*> listOfPockets);
 void checkBallCollisions(std::list<Ball*> listOfBalls);
 void checkWallCollisions(std::list<Ball*> listOfBalls);
 void collideOneMoving(Ball* ballOne, Ball* ballTwo);

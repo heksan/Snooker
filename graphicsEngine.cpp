@@ -70,6 +70,23 @@ void createBuffers(std::list<Ball*> listOfBalls){
 
 }
 
+void createBuffers(std::list<Pocket*> listOfPockets){
+	for (std::list<Pocket*>::iterator currentPocket = listOfPockets.begin(); currentPocket != listOfPockets.end(); currentPocket++){
+
+		glGenBuffers(1, &(*currentPocket)->vertexbuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, (*currentPocket)->vertexbuffer);
+		glBufferData(GL_ARRAY_BUFFER, sizeof((*currentPocket)->vertex_buffer_data), (*currentPocket)->vertex_buffer_data, GL_STATIC_DRAW);
+
+		glGenBuffers(1, &(*currentPocket)->colorbuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, (*currentPocket)->colorbuffer);
+		glBufferData(GL_ARRAY_BUFFER, sizeof((*currentPocket)->color_buffer_data), (*currentPocket)->color_buffer_data, GL_STATIC_DRAW);
+
+
+	}
+}
+
+
+
 void drawBall(Ball ball, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix){
 
 
@@ -123,6 +140,26 @@ void drawBalls(std::list<Ball*> listOfBalls, GLuint MatrixID, glm::mat4 ViewMatr
 	}
 
 }
+
+void drawPockets(std::list<Pocket*> listOfPockets, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix){
+	for (std::list<Pocket*>::iterator currentPocket = listOfPockets.begin(); currentPocket != listOfPockets.end(); currentPocket++){
+		(*currentPocket)->MVP = ProjectionMatrix * ViewMatrix * (*currentPocket)->matrix;
+		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &(*currentPocket)->MVP[0][0]);
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, (*currentPocket)->vertexbuffer);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, (*currentPocket)->colorbuffer);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+		glDrawArrays(GL_TRIANGLES, 0, 3*2);
+
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+	}
+}
+
 
 void drawTable(Table table, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix){
 

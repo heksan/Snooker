@@ -49,7 +49,6 @@ void moveBalls(std::list<Ball*> listOfBalls){
 //Used to set initial movementVector and deceleration to cueBall,
 //movementVector is currently based on mouse position 
 void initMovement(float speedVec, glm::vec2 mouseRay, Ball& ball){
-
 	double angle = atan2(mouseRay.x - ball.ballPosition.x, mouseRay.y - ball.ballPosition.z);
 	ball.movementVector = glm::vec3(sin(angle + M_PI), 0, cos(angle + M_PI));
 	ball.movementVector = ball.movementVector * speedVec;
@@ -94,6 +93,14 @@ void relocateMatrices(std::list<Ball*> listOfBalls){
 
 	for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
 		(*currentBall)->matrix = glm::translate((*currentBall)->matrix, (*currentBall)->ballPosition);
+	}
+
+}
+
+void relocateMatrices(std::list<Pocket*> listOfPockets){
+
+	for (std::list<Pocket*>::iterator currentPocket = listOfPockets.begin(); currentPocket != listOfPockets.end(); currentPocket++){
+		(*currentPocket)->matrix = glm::translate((*currentPocket)->matrix, (*currentPocket)->position);
 	}
 
 }
@@ -294,12 +301,13 @@ void relocateCueStick(glm::vec2 mouseRay, CueStick& cueStick, Ball cueball){
 }
 
 void moveStickToOrigin(CueStick& cueStick){
+
 	cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, cueStick.displacement));
 	cueStick.matrix = glm::rotate(cueStick.matrix, -cueStick.rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 	cueStick.matrix = glm::translate(cueStick.matrix, -cueStick.position);//goes to 0,0
 }
 
-
+//moves backwards slower than forward faster until hits the ball
 void moveCueStick(CueStick& cueStick, float force,bool& ballsMoving, bool& cueStickMoving){
 
 	if (!cueStick.accelerating){
@@ -320,8 +328,4 @@ void moveCueStick(CueStick& cueStick, float force,bool& ballsMoving, bool& cueSt
 			cueStick.accelerating = false;
 		}
 	}
-	
-	
-	//cueStick.position = cueStick.position + glm::vec3(0.0f, 0.0f, 0.1f*force);
-
 }

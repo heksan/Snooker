@@ -45,6 +45,9 @@
     <ClCompile Include="cueStick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="pocket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -66,6 +69,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="cueStick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pocket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
