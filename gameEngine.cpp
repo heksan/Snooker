@@ -144,40 +144,51 @@ void checkBallCollisions(std::list<Ball*> listOfBalls){
 }
 
 //When ball moves slightly outside of table area it is moved back to closes "in-table" position and has its movement vector changed
-void checkWallCollisions(std::list<Ball*> listOfBalls){
+void checkWallCollisions(std::list<Ball*>& listOfBalls){
 
 	//loop checking collisions in a way there are no double comparisons
 	for (std::list<Ball*>::iterator ball = listOfBalls.begin(); ball != listOfBalls.end(); ball++){
-		if (abs((*ball)->ballPosition.x) >= tableWidth - ballRadius){
-			//trace back to contact point
-			glm::vec3 stepBack = (*ball)->movementVector / precisionSteps;
-			glm::vec3 newBallPosition = (*ball)->ballPosition;
-
-			for (int i = 0; i < precisionSteps; i++){
-				newBallPosition = newBallPosition - (stepBack*2.0f);
-				if (abs(newBallPosition.x) <= tableWidth - ballRadius){
-					(*ball)->matrix = glm::translate((*ball)->matrix, (newBallPosition - (*ball)->ballPosition));
-					(*ball)->ballPosition = newBallPosition;
-					break;
+		if ((abs((*ball)->ballPosition.x) >= tableWidth - ballRadius)){
+			//determine wheter there is a pocket instead of wall
+			if (abs((*ball)->ballPosition.z) >= 7.5f && abs((*ball)->ballPosition.z) <= (tableLength - 7.5f)){//change 7.5 as its a test value
+				glm::vec3 stepBack = (*ball)->movementVector / precisionSteps;
+				glm::vec3 newBallPosition = (*ball)->ballPosition;
+				for (int i = 0; i < precisionSteps; i++){
+					newBallPosition = newBallPosition - (stepBack*2.0f);
+					if (abs(newBallPosition.x) <= tableWidth - ballRadius){
+						(*ball)->matrix = glm::translate((*ball)->matrix, (newBallPosition - (*ball)->ballPosition));
+						(*ball)->ballPosition = newBallPosition;
+						break;
+					}
 				}
+				changeDirection(*ball, 'x');
 			}
-			changeDirection(*ball, 'x');
+			else{
+				listOfBalls.remove((*ball));
+				break;
+			}
 		}
 
 		if (abs((*ball)->ballPosition.z) >= (tableLength - ballRadius)){
-			//trace back to contact point
-			glm::vec3 stepBack = (*ball)->movementVector / precisionSteps;
-			glm::vec3 newBallPosition = (*ball)->ballPosition;
-			for (int i = 0; i < precisionSteps; i++){
-				newBallPosition = newBallPosition - (stepBack*2.0f);
-				if (abs(newBallPosition.z) <= tableLength - ballRadius){
-					(*ball)->matrix = glm::translate((*ball)->matrix, (newBallPosition - (*ball)->ballPosition));
-					(*ball)->ballPosition = newBallPosition;
-					break;
-				}
+			if (abs((*ball)->ballPosition.x) <= (tableWidth - 7.5f)){
+				//trace back to contact point
+				glm::vec3 stepBack = (*ball)->movementVector / precisionSteps;
+				glm::vec3 newBallPosition = (*ball)->ballPosition;
+				for (int i = 0; i < precisionSteps; i++){
+					newBallPosition = newBallPosition - (stepBack*2.0f);
+					if (abs(newBallPosition.z) <= tableLength - ballRadius){
+						(*ball)->matrix = glm::translate((*ball)->matrix, (newBallPosition - (*ball)->ballPosition));
+						(*ball)->ballPosition = newBallPosition;
+						break;
+					}
 
+				}
+				changeDirection(*ball, 'z');
 			}
-			changeDirection(*ball, 'z');
+			else{
+				listOfBalls.remove((*ball));
+				break;
+			}
 		}
 	}
 }
@@ -285,18 +296,18 @@ void recalculateDeceleration(Ball* ball){
 }
 
 void relocateCueStick(glm::vec2 mouseRay, CueStick& cueStick, Ball cueball){
-	float angleBallMouse = atan2(cueball.ballPosition.x-mouseRay.x,cueball.ballPosition.z - mouseRay.y);
+	float angleBallMouse = atan2(cueball.ballPosition.x - mouseRay.x, cueball.ballPosition.z - mouseRay.y);
 	//trace back to zero
 	moveStickToOrigin(cueStick);
 	//translate to ball,rotate with mouse angle, translate by some value so stick points at the ball
 	cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(cueball.ballPosition.x, 0.0f, cueball.ballPosition.z));
 	cueStick.matrix = glm::rotate(cueStick.matrix, angleBallMouse, glm::vec3(0.0f, 1.0f, 0.0f));
-	cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, -cueStick.displacement ));
-	
+	cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, -cueStick.displacement));
+
 	cueStick.position = glm::vec3(cueball.ballPosition.x, 0.0f, cueball.ballPosition.z);
 	cueStick.temporaryPosition = cueStick.position;
 	cueStick.rotation = angleBallMouse;
-	
+
 
 }
 
@@ -308,7 +319,7 @@ void moveStickToOrigin(CueStick& cueStick){
 }
 
 //moves backwards slower than forward faster until hits the ball
-void moveCueStick(CueStick& cueStick, float force,bool& ballsMoving, bool& cueStickMoving){
+void moveCueStick(CueStick& cueStick, float force, bool& ballsMoving, bool& cueStickMoving){
 
 	if (!cueStick.accelerating){
 		cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, -0.1f*force));

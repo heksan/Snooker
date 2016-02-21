@@ -15,7 +15,7 @@ void relocateMatrix(Ball& ball);
 void relocateMatrices(std::list<Ball*> listOfBalls);
 void relocateMatrices(std::list<Pocket*> listOfPockets);
 void checkBallCollisions(std::list<Ball*> listOfBalls);
-void checkWallCollisions(std::list<Ball*> listOfBalls);
+void checkWallCollisions(std::list<Ball*>& listOfBalls);
 void collideOneMoving(Ball* ballOne, Ball* ballTwo);
 void collideStationary(Ball* ballOne, Ball* ballTwo);
 void collideMoving(Ball *ballOne, Ball  *ballTwo);
