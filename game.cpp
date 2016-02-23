@@ -44,7 +44,8 @@ int main(void)
 
 	//init balls and its list
 	std::list<Ball*> listOfBalls;
-	Ball cueBall(0, glm::vec3(0, 0, 0));
+	std::list<Ball*> listOfRePreacableBalls; //here goes white and all colours besides red
+	Ball cueBall(0, glm::vec3(0, 0, -130));
 	Ball justBall(1, glm::vec3(6, 0, 6));
 	Ball justAnballTwo(2, glm::vec3(12, 0, 12));
 	//Ball justAnballTwo2(3, glm::vec3(18, 0, 18));
@@ -61,6 +62,8 @@ int main(void)
 	//listOfBalls.push_back(&justAnballTwo2);
 	//listOfBalls.push_back(&justAnballTwo3);
 	//listOfBalls.push_back(&verySpecialBall);
+
+	listOfRePreacableBalls.push_back(&cueBall);
 
 	//pockets
 	std::list<Pocket*> listOfPockets;
@@ -153,12 +156,13 @@ int main(void)
 
 
 		//Main game loop//
-		if (!ballsMoving && !cueStickMoving){
+		if (!ballsMoving && !cueStickMoving){//stable
 			mouseRay = castRayThroughMouse();
 			relocateCueStick(mouseRay, cueStick, cueBall);
 			checkStart(cueStickMoving);
 			initMovement(6.0f, mouseRay, cueBall);//gives cueBall initial vectors 
 			drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
+			replacePocketedBalls(listOfBalls,listOfRePreacableBalls);
 		}
 		if (cueStickMoving){
 			drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
@@ -167,7 +171,7 @@ int main(void)
 		if (ballsMoving){
 			checkStop(listOfBalls);
 			ballsMoving = checkStable(listOfBalls);
-			checkWallCollisions(listOfBalls);
+			listOfBalls = checkWallCollisions(listOfBalls);
 			checkBallCollisions(listOfBalls);
 			moveBalls(listOfBalls);
 			
@@ -203,7 +207,7 @@ int main(void)
 //
 //
 //
-//
+// fix ball collisions, works only when moving is checked first
 // table can be static?
 ///
 // fix controls

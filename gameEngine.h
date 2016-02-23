@@ -15,7 +15,7 @@ void relocateMatrix(Ball& ball);
 void relocateMatrices(std::list<Ball*> listOfBalls);
 void relocateMatrices(std::list<Pocket*> listOfPockets);
 void checkBallCollisions(std::list<Ball*> listOfBalls);
-void checkWallCollisions(std::list<Ball*>& listOfBalls);
+std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls);
 void collideOneMoving(Ball* ballOne, Ball* ballTwo);
 void collideStationary(Ball* ballOne, Ball* ballTwo);
 void collideMoving(Ball *ballOne, Ball  *ballTwo);
@@ -24,5 +24,7 @@ void recalculateDeceleration(Ball* ball);
 void relocateCueStick(glm::vec2 mouseRay,CueStick& cueStick,Ball ball);
 void moveCueStick(CueStick& cueStick,float force,bool& ballsMoving,bool& cueStickMoving);
 void moveStickToOrigin(CueStick& cueStick);
-
+std::list <Ball*> removeBall(std::list <Ball*> listOfBalls, Ball* ball);
+void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list <Ball*> listOfRepleacableBalls);
+void moveBallToStartingPosition(Ball *ballToBeInserted);
 #endif

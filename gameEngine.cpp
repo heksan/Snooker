@@ -125,6 +125,7 @@ void checkBallCollisions(std::list<Ball*> listOfBalls){
 					//both stationary,caused by backtracking of other balls
 					if (glm::length((*ballOne)->movementVector) == 0.0 && (glm::length((*ballTwo)->movementVector) == 0.0)){
 						collideStationary(*ballOne, *ballTwo);
+
 					}
 					//both moving
 					if (glm::length((*ballOne)->movementVector) > 0.0 && (glm::length((*ballTwo)->movementVector) > 0.0)){
@@ -133,9 +134,16 @@ void checkBallCollisions(std::list<Ball*> listOfBalls){
 					//one moving
 					if (glm::length((*ballOne)->movementVector) > 0.0 && (glm::length((*ballTwo)->movementVector) == 0.0)){
 						collideOneMoving(*ballOne, *ballTwo);
+
 					}
 					if (glm::length((*ballTwo)->movementVector) > 0.0 && (glm::length((*ballTwo)->movementVector) == 0.0)){
 						collideOneMoving(*ballTwo, *ballOne);
+					}
+				}
+				else{
+					if ((*ballOne)->id == 0){
+						std::cout << "checking 0 " << glm::distance((*ballTwo)->ballPosition, (*ballOne)->ballPosition) << "\n";
+
 					}
 				}
 			}
@@ -144,7 +152,7 @@ void checkBallCollisions(std::list<Ball*> listOfBalls){
 }
 
 //When ball moves slightly outside of table area it is moved back to closes "in-table" position and has its movement vector changed
-void checkWallCollisions(std::list<Ball*>& listOfBalls){
+std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls){
 
 	//loop checking collisions in a way there are no double comparisons
 	for (std::list<Ball*>::iterator ball = listOfBalls.begin(); ball != listOfBalls.end(); ball++){
@@ -164,8 +172,8 @@ void checkWallCollisions(std::list<Ball*>& listOfBalls){
 				changeDirection(*ball, 'x');
 			}
 			else{
-				listOfBalls.remove((*ball));
-				break;
+				listOfBalls = removeBall(listOfBalls, *ball);
+				return listOfBalls;
 			}
 		}
 
@@ -185,12 +193,13 @@ void checkWallCollisions(std::list<Ball*>& listOfBalls){
 				}
 				changeDirection(*ball, 'z');
 			}
-			else{
-				listOfBalls.remove((*ball));
-				break;
+			else{//ball in pocket
+				listOfBalls = removeBall(listOfBalls, *ball);
+				return listOfBalls;
 			}
 		}
 	}
+	return listOfBalls;
 }
 
 
@@ -251,7 +260,6 @@ void collideOneMoving(Ball* ballOne, Ball* ballTwo){
 //Balls switch movement vectors
 void collideMoving(Ball *ballOne, Ball *ballTwo){
 
-	std::cout << "movng collided \n ";
 	glm::vec3 stepBackOne = (ballOne->movementVector / precisionSteps)*2.0f;
 	glm::vec3 stepBackTwo = (ballTwo->movementVector / precisionSteps)*2.0f;
 	glm::vec3 newBallOnePosition = ballOne->ballPosition;
@@ -331,12 +339,47 @@ void moveCueStick(CueStick& cueStick, float force, bool& ballsMoving, bool& cueS
 	else{
 		cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, 0.3f*force));
 		cueStick.temporaryPosition = cueStick.temporaryPosition + glm::vec3(0.0f, 0.0f, 0.3f*force);
-		std::cout << (cueStick.position.z - cueStick.temporaryPosition.z) << "\n";
 		if ((cueStick.position.z - cueStick.temporaryPosition.z) <= -7.0f){
 			cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, (cueStick.position.z - cueStick.temporaryPosition.z)));
 			cueStickMoving = false;
 			ballsMoving = true;
 			cueStick.accelerating = false;
 		}
+	}
+}
+
+
+std::list <Ball*> removeBall(std::list <Ball*> listOfBalls, Ball* ball){
+	std::list<Ball*> newListOfBalls;
+	for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
+		if ((*currentBall)->id != ball->id){
+			newListOfBalls.push_back(*currentBall);
+		}
+	}
+	return newListOfBalls;
+}
+
+void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list <Ball*> listOfRepleacableBalls){
+	for (std::list<Ball*>::iterator ballToBeInserted = listOfRepleacableBalls.begin(); ballToBeInserted != listOfRepleacableBalls.end(); ballToBeInserted++){
+		bool found = false;
+		for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
+			if ((*currentBall)->id == (*ballToBeInserted)->id){
+				found = true;
+			}
+		}
+		if (!found){
+			listOfBalls.push_front(*ballToBeInserted);
+			moveBallToStartingPosition(*ballToBeInserted);
+		}
+	}
+}
+
+void moveBallToStartingPosition(Ball *ballToBeInserted){
+	if (ballToBeInserted->id == 0){
+		std::cout << "inserting";
+		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, -130.0f));
+		ballToBeInserted->ballPosition = glm::vec3(0.0f, 0.0f, -130.0f);
+		ballToBeInserted->movementVector = glm::vec3(0.0);
+		
 	}
 }
