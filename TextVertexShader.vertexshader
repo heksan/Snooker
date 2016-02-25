@@ -1,0 +1,21 @@
+#version 330 core
+
+// Input vertex data, different for all executions of this shader.
+layout(location = 0) in vec2 vertexPosition_screenspace;
+layout(location = 1) in vec3 vertexColor;
+
+// Output data ; will be interpolated for each fragment.
+out vec3 fragmentColor;
+
+void main(){
+
+	// Output position of the vertex, in clip space
+	// map [0..800][0..600] to [-1..1][-1..1]       ......1024, 768
+	vec2 vertexPosition_homoneneousspace = vertexPosition_screenspace - vec2(512,389); // [0..800][0..600] -> [-400..400][-300..300]
+	vertexPosition_homoneneousspace /= vec2(512,389);
+	gl_Position =  vec4(vertexPosition_homoneneousspace,0,1);
+	
+	
+	fragmentColor = vertexColor;
+}
+

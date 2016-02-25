@@ -21,6 +21,7 @@ using namespace glm;
 #include "table.h"
 #include "cueStick.h"
 #include "pocket.h"
+#include "gui.h"
 
 
 GLFWwindow* window;
@@ -31,6 +32,7 @@ double speedVec = 1.0;
 
 int main(void)
 {
+
 	//init matrices
 	glm::vec3 cameraPosition;//later will not used
 	glm::vec2 mouseRay;
@@ -141,15 +143,23 @@ int main(void)
 	relocateMatrices(listOfBalls);
 	relocateMatrices(listOfPockets);
 	
-
-	
+	//test gui
+	initText2D();
 
 
 
 	do{
+
+		
+
+		
+		
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(programID);
-
+		//testGui
+		printText2D();
+		glUseProgram(programID);
 		computeCameraMatricesFromInputs();
 		ProjectionMatrix = getProjectionMatrix();
 		ViewMatrix = getViewMatrix();
@@ -206,16 +216,20 @@ int main(void)
 //      REFACTOR BITCH
 //
 //
-//
+// 
 // fix ball collisions, works only when moving is checked first
+//gui - new shader needed
+//trace
+//rules and balls
+//points
 // table can be static?
 ///
 // fix controls
-// close balls dirs
+// graphics should be better
 //
 //make different collor buffer datas depending on IDs
 //
-//delete pointers when  in pocket - oh right, make pockets ffs
+//
 //
 //angular velocity
 //mouse wheel

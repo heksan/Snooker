@@ -19,6 +19,7 @@ using namespace glm;
 #include "ball.h" 
 
 const float ballRadius = 2.6f;
+const float pocketRadius = 7.5f;
 const float tableWidth = 89.0f;
 const float tableLength = 178.5f;
 const float precisionSteps = 200.0f;
@@ -140,12 +141,7 @@ void checkBallCollisions(std::list<Ball*> listOfBalls){
 						collideOneMoving(*ballTwo, *ballOne);
 					}
 				}
-				else{
-					if ((*ballOne)->id == 0){
-						std::cout << "checking 0 " << glm::distance((*ballTwo)->ballPosition, (*ballOne)->ballPosition) << "\n";
-
-					}
-				}
+				
 			}
 		}
 	}
@@ -158,7 +154,7 @@ std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls){
 	for (std::list<Ball*>::iterator ball = listOfBalls.begin(); ball != listOfBalls.end(); ball++){
 		if ((abs((*ball)->ballPosition.x) >= tableWidth - ballRadius)){
 			//determine wheter there is a pocket instead of wall
-			if (abs((*ball)->ballPosition.z) >= 7.5f && abs((*ball)->ballPosition.z) <= (tableLength - 7.5f)){//change 7.5 as its a test value
+			if (abs((*ball)->ballPosition.z) >= pocketRadius && abs((*ball)->ballPosition.z) <= (tableLength - pocketRadius)){//change 7.5 as its a test value
 				glm::vec3 stepBack = (*ball)->movementVector / precisionSteps;
 				glm::vec3 newBallPosition = (*ball)->ballPosition;
 				for (int i = 0; i < precisionSteps; i++){
@@ -178,7 +174,7 @@ std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls){
 		}
 
 		if (abs((*ball)->ballPosition.z) >= (tableLength - ballRadius)){
-			if (abs((*ball)->ballPosition.x) <= (tableWidth - 7.5f)){
+			if (abs((*ball)->ballPosition.x) <= (tableWidth - pocketRadius)){
 				//trace back to contact point
 				glm::vec3 stepBack = (*ball)->movementVector / precisionSteps;
 				glm::vec3 newBallPosition = (*ball)->ballPosition;
@@ -319,6 +315,7 @@ void relocateCueStick(glm::vec2 mouseRay, CueStick& cueStick, Ball cueball){
 
 }
 
+//after moving cueBall to staring position cue stick has to follow
 void moveStickToOrigin(CueStick& cueStick){
 
 	cueStick.matrix = glm::translate(cueStick.matrix, glm::vec3(0.0f, 0.0f, cueStick.displacement));
@@ -348,7 +345,7 @@ void moveCueStick(CueStick& cueStick, float force, bool& ballsMoving, bool& cueS
 	}
 }
 
-
+//removed ball from the list(by id)
 std::list <Ball*> removeBall(std::list <Ball*> listOfBalls, Ball* ball){
 	std::list<Ball*> newListOfBalls;
 	for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
@@ -359,6 +356,8 @@ std::list <Ball*> removeBall(std::list <Ball*> listOfBalls, Ball* ball){
 	return newListOfBalls;
 }
 
+//Takes list of Balls which should be on the table after pocketing(in most cases), checks listOfBalls for their presence
+//and if not found pushes them in
 void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list <Ball*> listOfRepleacableBalls){
 	for (std::list<Ball*>::iterator ballToBeInserted = listOfRepleacableBalls.begin(); ballToBeInserted != listOfRepleacableBalls.end(); ballToBeInserted++){
 		bool found = false;
@@ -374,6 +373,7 @@ void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list <Ball*> listO
 	}
 }
 
+//after reinsertion checks inserted ball id and places it on designated position
 void moveBallToStartingPosition(Ball *ballToBeInserted){
 	if (ballToBeInserted->id == 0){
 		std::cout << "inserting";

@@ -48,6 +48,9 @@
     <ClCompile Include="pocket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="gui.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -74,6 +77,9 @@
     <ClInclude Include="pocket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="gui.h">
+      <Filter>common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="TransformVertexShader.vertexshader">
@@ -82,5 +88,10 @@
     <Text Include="ColorFragmentShader.fragmentshader">
       <Filter>shaders</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TextVertexShader.vertexshader">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
