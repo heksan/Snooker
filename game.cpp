@@ -13,8 +13,8 @@
 using namespace glm;
 
 //include everything else
-#include <shader.h>
-#include <controls.h>
+#include "shader.h"
+#include "controls.h"
 #include "gameEngine.h"
 #include "graphicsEngine.h"
 #include "ball.h"
