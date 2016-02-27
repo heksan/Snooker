@@ -34,27 +34,25 @@ void initText2D(){
 
 }
 
-void printText2D(){
+void printText2D(float force){
 
 	std::vector<glm::vec2> vertices;
 	std::vector<glm::vec3> cols;
-	
-	vertices.push_back(glm::vec2(0.0f,0.0f));
-	vertices.push_back(glm::vec2(0.0f, 100.0f));
-	vertices.push_back(glm::vec2(100.0f, 0.0f));
+	for (int i = 0; i < 15; i++){
+		vertices.push_back(glm::vec2(1024.0f, 200.0f+(i*25.0f)));//768
+		vertices.push_back(glm::vec2(1024.0f, 225.0f + (i*25.0f)));
+		vertices.push_back(glm::vec2(999.0f, 225.0f + (i*25.0f)));
+		vertices.push_back(glm::vec2(1024.0f, 200.0f + (i*25.0f)));
+		vertices.push_back(glm::vec2(999.0f, 225.0f + (i*25.0f)));
+		vertices.push_back(glm::vec2(999.0f, 200.0f + (i*25.0f)));
 
-	vertices.push_back(glm::vec2(100.0f, 100.0f));
-	vertices.push_back(glm::vec2(0.0f, 100.0f));
-	vertices.push_back(glm::vec2(100.0f, 0.0f));
-
-	cols.push_back(glm::vec3(0, 0, 0));
-	cols.push_back(glm::vec3(0, 0, 0));
-	cols.push_back(glm::vec3(0, 0, 0));
-
-	cols.push_back(glm::vec3(0, 0, 0));
-	cols.push_back(glm::vec3(0, 0, 0));
-	cols.push_back(glm::vec3(0, 0, 0));
-
+		cols.push_back(glm::vec3(1, 1, 1));
+		cols.push_back(glm::vec3(1, 1, 1));
+		cols.push_back(glm::vec3(1, 1, 1));
+		cols.push_back(glm::vec3(1, 1, 1));
+		cols.push_back(glm::vec3(1, 1, 1));
+		cols.push_back(glm::vec3(1, 1, 1));
+	}
 
 	glUseProgram(TextShaderID);
 
@@ -82,5 +80,6 @@ void printText2D(){
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
-
+	vertices.clear();
+	cols.clear();
 }

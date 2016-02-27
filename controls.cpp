@@ -39,10 +39,17 @@ glm::mat4 getProjectionMatrix(){
 	return ProjectionMatrix;
 }
 
-void checkStart(bool& cueStickMoving){
+//checks if mouse is hit in playing area or in power bar
+void checkStart(bool& cueStickMoving,float& force){
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS){
-		cueStickMoving = true;
+		if (xpos>999.0f && screenHeight - ypos>220.0f && screenHeight-ypos<575.0f){
+			force = (screenHeight - ypos - 200) / 35.0f;
+			std::cout << "changing force to "<<force << "\n";
+		}
+		else{
+			cueStickMoving = true;
+		}
 	}
 }
 

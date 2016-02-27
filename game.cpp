@@ -28,7 +28,7 @@ GLFWwindow* window;
 bool ballsMoving = false;
 bool cueStickMoving = false;
 double speedVec = 1.0;
-
+float force = 7.0f;
 
 int main(void)
 {
@@ -158,7 +158,7 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(programID);
 		//testGui
-		printText2D();
+		printText2D(force);
 		glUseProgram(programID);
 		computeCameraMatricesFromInputs();
 		ProjectionMatrix = getProjectionMatrix();
@@ -169,14 +169,14 @@ int main(void)
 		if (!ballsMoving && !cueStickMoving){//stable
 			mouseRay = castRayThroughMouse();
 			relocateCueStick(mouseRay, cueStick, cueBall);
-			checkStart(cueStickMoving);
-			initMovement(6.0f, mouseRay, cueBall);//gives cueBall initial vectors 
+			checkStart(cueStickMoving,force);
+			initMovement(force, mouseRay, cueBall);//gives cueBall initial vectors 
 			drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
 			replacePocketedBalls(listOfBalls,listOfRePreacableBalls);
 		}
 		if (cueStickMoving){
 			drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
-			moveCueStick(cueStick, 10.0f, ballsMoving, cueStickMoving);//when finished sets cueStickMoving to false and ballsMoving to true
+			moveCueStick(cueStick, force, ballsMoving, cueStickMoving);//when finished sets cueStickMoving to false and ballsMoving to true
 		}
 		if (ballsMoving){
 			checkStop(listOfBalls);
@@ -216,9 +216,9 @@ int main(void)
 //      REFACTOR BITCH
 //
 //
-// 
+// make decceleratio  speed smaller
 // fix ball collisions, works only when moving is checked first
-//gui - new shader needed
+//gui - new shader needed for text
 //trace
 //rules and balls
 //points
