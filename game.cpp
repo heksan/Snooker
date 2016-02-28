@@ -217,7 +217,8 @@ int main(void)
 //
 //
 // make decceleratio  speed smaller
-// fix ball collisions, works only when moving is checked first
+// fix ball collisions, works only when moving is checked first, fix everything
+//add more balls
 //gui - new shader needed for text
 //trace
 //rules and balls

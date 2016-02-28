@@ -44,7 +44,7 @@ void checkStart(bool& cueStickMoving,float& force){
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS){
 		if (xpos>999.0f && screenHeight - ypos>220.0f && screenHeight-ypos<575.0f){
-			force = (screenHeight - ypos - 200) / 35.0f;
+			force = (screenHeight - ypos - 220) / 35.0f;
 			std::cout << "changing force to "<<force << "\n";
 		}
 		else{

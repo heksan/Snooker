@@ -35,23 +35,32 @@ void initText2D(){
 }
 
 void printText2D(float force){
-
+	int redBars = round((force / 10.1f)*75.0f);// scale up to 75bars, 10.1 is max force
 	std::vector<glm::vec2> vertices;
 	std::vector<glm::vec3> cols;
-	for (int i = 0; i < 15; i++){
-		vertices.push_back(glm::vec2(1024.0f, 200.0f+(i*25.0f)));//768
-		vertices.push_back(glm::vec2(1024.0f, 225.0f + (i*25.0f)));
-		vertices.push_back(glm::vec2(999.0f, 225.0f + (i*25.0f)));
-		vertices.push_back(glm::vec2(1024.0f, 200.0f + (i*25.0f)));
-		vertices.push_back(glm::vec2(999.0f, 225.0f + (i*25.0f)));
-		vertices.push_back(glm::vec2(999.0f, 200.0f + (i*25.0f)));
-
-		cols.push_back(glm::vec3(1, 1, 1));
-		cols.push_back(glm::vec3(1, 1, 1));
-		cols.push_back(glm::vec3(1, 1, 1));
-		cols.push_back(glm::vec3(1, 1, 1));
-		cols.push_back(glm::vec3(1, 1, 1));
-		cols.push_back(glm::vec3(1, 1, 1));
+	for (int i = 0; i < 75; i++){
+		vertices.push_back(glm::vec2(1024.0f, 200.0f+(i*5.0f)));//768
+		vertices.push_back(glm::vec2(1024.0f, 205.0f + (i*5.0f)));
+		vertices.push_back(glm::vec2(999.0f, 205.0f + (i*5.0f)));
+		vertices.push_back(glm::vec2(1024.0f, 200.0f + (i*5.0f)));
+		vertices.push_back(glm::vec2(999.0f, 205.0f + (i*5.0f)));
+		vertices.push_back(glm::vec2(999.0f, 200.0f + (i*5.0f)));
+		if (i <= redBars){
+			cols.push_back(glm::vec3(1, 0, 0));
+			cols.push_back(glm::vec3(1, 0, 0));
+			cols.push_back(glm::vec3(1, 0, 0));
+			cols.push_back(glm::vec3(1, 0, 0));
+			cols.push_back(glm::vec3(1, 0, 0));
+			cols.push_back(glm::vec3(1, 0, 0));
+		}
+		else{
+			cols.push_back(glm::vec3(1, 1, 1));
+			cols.push_back(glm::vec3(1, 1, 1));
+			cols.push_back(glm::vec3(1, 1, 1));
+			cols.push_back(glm::vec3(1, 1, 1));
+			cols.push_back(glm::vec3(1, 1, 1));
+			cols.push_back(glm::vec3(1, 1, 1));
+		}
 	}
 
 	glUseProgram(TextShaderID);
