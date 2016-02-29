@@ -23,7 +23,7 @@ const float pocketRadius = 7.5f;
 const float tableWidth = 89.0f;
 const float tableLength = 178.5f;
 const float precisionSteps = 200.0f;
-const float decelerationRate = 0.08f;
+const float decelerationRate = 0.02f;
 
 glm::mat4 moveBall(Ball& ball){
 

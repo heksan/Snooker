@@ -18,6 +18,7 @@ const double screenHeight = 768;
 const float FoV = 45.0f;
 const float speed = 45.0f;
 const float mouseSpeed = 0.005f;
+const float powerScaleFactor = 35.0f;
 
 double xpos = screenWidth / 2;
 double ypos = screenHeight / 2;
@@ -39,13 +40,12 @@ glm::mat4 getProjectionMatrix(){
 	return ProjectionMatrix;
 }
 
-//checks if mouse is hit in playing area or in power bar
+//checks if mouse is hit in playing area or in power bar, sets force
 void checkStart(bool& cueStickMoving,float& force){
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS){
 		if (xpos>999.0f && screenHeight - ypos>220.0f && screenHeight-ypos<575.0f){
-			force = (screenHeight - ypos - 220) / 35.0f;
-			std::cout << "changing force to "<<force << "\n";
+			force = (screenHeight - ypos - 225) / powerScaleFactor; // 35 is powerScaleFactor,225 = gui start pos plus bar height
 		}
 		else{
 			cueStickMoving = true;

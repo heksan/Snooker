@@ -50,8 +50,8 @@ int main(void)
 	Ball cueBall(0, glm::vec3(0, 0, -130));
 	Ball justBall(1, glm::vec3(6, 0, 6));
 	Ball justAnballTwo(2, glm::vec3(12, 0, 12));
-	//Ball justAnballTwo2(3, glm::vec3(18, 0, 18));
-	//Ball justAnballTwo3(4, glm::vec3(20, 0, 30));
+	Ball justAnballTwo2(3, glm::vec3(18, 0, 18));
+	Ball justAnballTwo3(4, glm::vec3(20, 0, 30));
 	//Ball justAnballTwo4(5, glm::vec3(20, 0,20));
 	//Ball justAnballTwo5(6, glm::vec3(0, 0, 20));
 	//Ball justAnballTwo6(7, glm::vec3(20, 0, 0));
@@ -61,8 +61,8 @@ int main(void)
 	listOfBalls.push_back(&cueBall);
 	listOfBalls.push_back(&justBall);
 	listOfBalls.push_back(&justAnballTwo);
-	//listOfBalls.push_back(&justAnballTwo2);
-	//listOfBalls.push_back(&justAnballTwo3);
+	listOfBalls.push_back(&justAnballTwo2);
+	listOfBalls.push_back(&justAnballTwo3);
 	//listOfBalls.push_back(&verySpecialBall);
 
 	listOfRePreacableBalls.push_back(&cueBall);
@@ -144,7 +144,7 @@ int main(void)
 	relocateMatrices(listOfPockets);
 	
 	//test gui
-	initText2D();
+	initPowerBar2D();
 
 
 
@@ -157,11 +157,10 @@ int main(void)
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(programID);
-		//testGui
-		printText2D(force);
+		printPowerBar2D(force);
 		glUseProgram(programID);
 		computeCameraMatricesFromInputs();
-		ProjectionMatrix = getProjectionMatrix();
+		ProjectionMatrix = getProjectionMatrix();//refactor this and next line
 		ViewMatrix = getViewMatrix();
 
 
@@ -188,7 +187,7 @@ int main(void)
 		}
 		
 
-		////end//////
+		////end of game loop//////
 		
 		
 		drawBalls(listOfBalls, MatrixID, ViewMatrix, ProjectionMatrix);
@@ -215,8 +214,9 @@ int main(void)
 //notes
 //      REFACTOR BITCH
 //
-//
-// make decceleratio  speed smaller
+// ref shader
+// ref matrices(view and proj)
+// make  speed smaller
 // fix ball collisions, works only when moving is checked first, fix everything
 //add more balls
 //gui - new shader needed for text

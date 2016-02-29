@@ -1,7 +1,7 @@
 #ifndef GUI_H
 #define GUI_H
 
-void initText2D();
-void printText2D(float force);
+void initPowerBar2D();
+void printPowerBar2D(float force);
 
 #endif

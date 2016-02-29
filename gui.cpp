@@ -25,8 +25,12 @@ GLuint TextVertexBufferID;
 GLuint TextColBufferID;
 GLuint TextShaderID;
 GLuint TextUniformID;
+const float barsNumber = 75.0f;
+const float powerBarStart = 200.0f;
+const float powerBarHeight = 5.0f; // height of one rect in power bar
 
-void initText2D(){
+//creates buffers and shared for power bar (2d elem of gui)
+void initPowerBar2D(){
 	TextShaderID = LoadShaders("TextVertexShader.vertexshader", "ColorFragmentShader.fragmentshader");
 	glGenBuffers(1, &TextVertexBufferID);
 	glGenBuffers(1, &TextColBufferID);
@@ -34,42 +38,43 @@ void initText2D(){
 
 }
 
-void printText2D(float force){
-	int redBars = round((force / 10.1f)*75.0f);// scale up to 75bars, 10.1 is max force
-	std::vector<glm::vec2> vertices;
-	std::vector<glm::vec3> cols;
-	for (int i = 0; i < 75; i++){
-		vertices.push_back(glm::vec2(1024.0f, 200.0f+(i*5.0f)));//768
-		vertices.push_back(glm::vec2(1024.0f, 205.0f + (i*5.0f)));
-		vertices.push_back(glm::vec2(999.0f, 205.0f + (i*5.0f)));
-		vertices.push_back(glm::vec2(1024.0f, 200.0f + (i*5.0f)));
-		vertices.push_back(glm::vec2(999.0f, 205.0f + (i*5.0f)));
-		vertices.push_back(glm::vec2(999.0f, 200.0f + (i*5.0f)));
+//prints gui element and fills it with color based on force
+void printPowerBar2D(float force){
+	int redBars = round((force / 10.0f)*barsNumber);// scale up to bars num, 10.1 is max force
+	std::vector<glm::vec2> barElements;
+	std::vector<glm::vec3> barColors;
+	for (int i = 0; i < barsNumber; i++){
+		barElements.push_back(glm::vec2(1024.0f, powerBarStart+(i*powerBarHeight)));//768
+		barElements.push_back(glm::vec2(1024.0f, powerBarStart + powerBarHeight + (i*powerBarHeight)));
+		barElements.push_back(glm::vec2(999.0f, powerBarStart + powerBarHeight + (i*powerBarHeight)));
+		barElements.push_back(glm::vec2(1024.0f, powerBarStart + (i*powerBarHeight)));
+		barElements.push_back(glm::vec2(999.0f, powerBarStart+powerBarHeight + (i*powerBarHeight)));
+		barElements.push_back(glm::vec2(999.0f, powerBarStart + (i*powerBarHeight)));
 		if (i <= redBars){
-			cols.push_back(glm::vec3(1, 0, 0));
-			cols.push_back(glm::vec3(1, 0, 0));
-			cols.push_back(glm::vec3(1, 0, 0));
-			cols.push_back(glm::vec3(1, 0, 0));
-			cols.push_back(glm::vec3(1, 0, 0));
-			cols.push_back(glm::vec3(1, 0, 0));
+			barColors.push_back(glm::vec3(1, 0, 0));
+			barColors.push_back(glm::vec3(1, 0, 0));
+			barColors.push_back(glm::vec3(1, 0, 0));
+			barColors.push_back(glm::vec3(1, 0, 0));
+			barColors.push_back(glm::vec3(1, 0, 0));
+			barColors.push_back(glm::vec3(1, 0, 0));
 		}
 		else{
-			cols.push_back(glm::vec3(1, 1, 1));
-			cols.push_back(glm::vec3(1, 1, 1));
-			cols.push_back(glm::vec3(1, 1, 1));
-			cols.push_back(glm::vec3(1, 1, 1));
-			cols.push_back(glm::vec3(1, 1, 1));
-			cols.push_back(glm::vec3(1, 1, 1));
+			barColors.push_back(glm::vec3(1, 1, 1));
+			barColors.push_back(glm::vec3(1, 1, 1));
+			barColors.push_back(glm::vec3(1, 1, 1));
+			barColors.push_back(glm::vec3(1, 1, 1));
+			barColors.push_back(glm::vec3(1, 1, 1));
+			barColors.push_back(glm::vec3(1, 1, 1));
 		}
 	}
 
 	glUseProgram(TextShaderID);
 
 	glBindBuffer(GL_ARRAY_BUFFER, TextVertexBufferID);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec2), &vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, barElements.size() * sizeof(glm::vec2), &barElements[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, TextColBufferID);
-	glBufferData(GL_ARRAY_BUFFER, cols.size() * sizeof(glm::vec3), &cols[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, barColors.size() * sizeof(glm::vec3), &barColors[0], GL_STATIC_DRAW);
 
 
 	glEnableVertexAttribArray(0);
@@ -83,12 +88,12 @@ void printText2D(float force){
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	glDrawArrays(GL_TRIANGLES, 0, barElements.size());
 	
 	glDisable(GL_BLEND);
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
-	vertices.clear();
-	cols.clear();
+	barElements.clear();
+	barColors.clear();
 }
