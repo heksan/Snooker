@@ -44,8 +44,9 @@ glm::mat4 getProjectionMatrix(){
 void checkStart(bool& cueStickMoving,float& force){
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS){
-		if (xpos>999.0f && screenHeight - ypos>220.0f && screenHeight-ypos<575.0f){
-			force = (screenHeight - ypos - 225) / powerScaleFactor; // 35 is powerScaleFactor,225 = gui start pos plus bar height
+		if (xpos>999.0f && screenHeight - ypos>200.0f && screenHeight-ypos<575.0f){
+			force = (screenHeight - ypos - 200) / powerScaleFactor; 
+			//std::cout << force<<"\n";
 		}
 		else{
 			cueStickMoving = true;

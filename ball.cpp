@@ -18,13 +18,54 @@ Ball::Ball(int ballID, glm::vec3 position)
 	movementVector = glm::vec3(0, 0, 0);
 	ballPosition = position;
 	glm::mat4 cueMatrix = glm::mat4(1.0);
+
+	//ids
+	//0-white
+	//1-15 -red
+	//16 yellow
+	//17 orange
+	//18 green
+	//19blue
+	//20 pink
+	//21black
+
 	if (ballID == 0){
 		red = 0.9f;
 		green = 0.9f;
 		blue = 0.9f;
 	}
-	else{
+	if(ballID>0 && ballID<=15){
 		red = 1.0f;
+		green = 0.0f;
+		blue = 0.0f;
+	}
+	if (ballID == 16){
+		red = 1.0f;
+		green = 1.0f;
+		blue = 0.0f;
+	}
+	if (ballID == 17){
+		red = 1.0f;
+		green = 0.7f;
+		blue = 0.0f;
+	}
+	if (ballID == 18){
+		red = 0.0f;
+		green = 0.8f;
+		blue = 0.0f;
+	}
+	if (ballID == 19){
+		red = 0.0f;
+		green = 0.0f;
+		blue = 1.0f;
+	}
+	if (ballID == 20){
+		red = 0.9f;
+		green = 0.4f;
+		blue = 0.7f;
+	}
+	if (ballID == 21){
+		red = 0.0f;
 		green = 0.0f;
 		blue = 0.0f;
 	}

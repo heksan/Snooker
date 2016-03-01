@@ -40,7 +40,7 @@ void initPowerBar2D(){
 
 //prints gui element and fills it with color based on force
 void printPowerBar2D(float force){
-	int redBars = round((force / 10.0f)*barsNumber);// scale up to bars num, 10.1 is max force
+	int redBars = round((force / 10.48f)*barsNumber);// scale up to bars num, 10.48 is max force
 	std::vector<glm::vec2> barElements;
 	std::vector<glm::vec3> barColors;
 	for (int i = 0; i < barsNumber; i++){
@@ -50,7 +50,7 @@ void printPowerBar2D(float force){
 		barElements.push_back(glm::vec2(1024.0f, powerBarStart + (i*powerBarHeight)));
 		barElements.push_back(glm::vec2(999.0f, powerBarStart+powerBarHeight + (i*powerBarHeight)));
 		barElements.push_back(glm::vec2(999.0f, powerBarStart + (i*powerBarHeight)));
-		if (i <= redBars){
+		if (i < redBars){
 			barColors.push_back(glm::vec3(1, 0, 0));
 			barColors.push_back(glm::vec3(1, 0, 0));
 			barColors.push_back(glm::vec3(1, 0, 0));

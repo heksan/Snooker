@@ -48,24 +48,43 @@ int main(void)
 	std::list<Ball*> listOfBalls;
 	std::list<Ball*> listOfRePreacableBalls; //here goes white and all colours besides red
 	Ball cueBall(0, glm::vec3(0, 0, -130));
-	Ball justBall(1, glm::vec3(6, 0, 6));
+	
 	Ball justAnballTwo(2, glm::vec3(12, 0, 12));
 	Ball justAnballTwo2(3, glm::vec3(18, 0, 18));
 	Ball justAnballTwo3(4, glm::vec3(20, 0, 30));
-	//Ball justAnballTwo4(5, glm::vec3(20, 0,20));
-	//Ball justAnballTwo5(6, glm::vec3(0, 0, 20));
-	//Ball justAnballTwo6(7, glm::vec3(20, 0, 0));
-	//Ball justAnballTwo7(8, glm::vec3(0, 0, -20));
-	//Ball verySpecialBall(9, glm::vec3(60, 0, 60));
+
+	/////////////////test balls
+	//16 yellow
+	//17 orange
+	//18 green
+	//19blue
+	//20 pink
+	//21black
+	Ball yellowBall(16, glm::vec3(30, 0, -100));
+	Ball orangeBall(17, glm::vec3(0, 0, -100));
+	Ball greenBall(18, glm::vec3(-30, 0, -100));
+	Ball blueBall(19, glm::vec3(0, 0, 0));
+	Ball pinkBall(20, glm::vec3(0, 0, 90));
+	Ball blackBall(21, glm::vec3(0, 0, 150));
 
 	listOfBalls.push_back(&cueBall);
-	listOfBalls.push_back(&justBall);
 	listOfBalls.push_back(&justAnballTwo);
 	listOfBalls.push_back(&justAnballTwo2);
 	listOfBalls.push_back(&justAnballTwo3);
-	//listOfBalls.push_back(&verySpecialBall);
+	listOfBalls.push_back(&yellowBall);
+	listOfBalls.push_back(&orangeBall);
+	listOfBalls.push_back(&greenBall);
+	listOfBalls.push_back(&blueBall);
+	listOfBalls.push_back(&pinkBall);
+	listOfBalls.push_back(&blackBall);
 
 	listOfRePreacableBalls.push_back(&cueBall);
+	listOfRePreacableBalls.push_back(&yellowBall);
+	listOfRePreacableBalls.push_back(&orangeBall);
+	listOfRePreacableBalls.push_back(&greenBall);
+	listOfRePreacableBalls.push_back(&blueBall);
+	listOfRePreacableBalls.push_back(&pinkBall);
+	listOfRePreacableBalls.push_back(&blackBall);
 
 	//pockets
 	std::list<Pocket*> listOfPockets;
@@ -213,7 +232,7 @@ int main(void)
 
 //notes
 //      REFACTOR BITCH
-//
+// setting up white ball
 // ref shader
 // ref matrices(view and proj)
 // make  speed smaller

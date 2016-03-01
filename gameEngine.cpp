@@ -113,8 +113,9 @@ void checkBallCollisions(std::list<Ball*> listOfBalls){
 
 	//loop checking collisions in a way there are no double comparisons
 	for (std::list<Ball*>::iterator ballOne = listOfBalls.begin(); ballOne != listOfBalls.end(); ballOne++){
-		for (std::list<Ball*>::iterator ballTwo = std::find(listOfBalls.begin(), listOfBalls.end(), (*ballOne)); ballTwo != listOfBalls.end(); ballTwo++){
-			if ((*ballTwo)->id != (*ballOne)->id){
+		for (std::list<Ball*>::iterator ballTwo = listOfBalls.begin(); ballTwo != listOfBalls.end(); ballTwo++){
+		//for (std::list<Ball*>::iterator ballTwo = std::find(listOfBalls.begin(), listOfBalls.end(), (*ballOne)); ballTwo != listOfBalls.end(); ballTwo++){
+			//if ((*ballTwo)->id != (*ballOne)->id){can and will be fixed
 				if (glm::distance((*ballTwo)->ballPosition, (*ballOne)->ballPosition) < 2 * ballRadius){
 					//4 ways of ensuring no infinite collisions - happens when ball travel too fast and is caught "inside" other ball forever
 					//slowing down(solves part of problem)
@@ -142,7 +143,7 @@ void checkBallCollisions(std::list<Ball*> listOfBalls){
 					}
 				}
 				
-			}
+			//}
 		}
 	}
 }
@@ -376,10 +377,61 @@ void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list <Ball*> listO
 //after reinsertion checks inserted ball id and places it on designated position
 void moveBallToStartingPosition(Ball *ballToBeInserted){
 	if (ballToBeInserted->id == 0){
-		std::cout << "inserting";
+		std::cout << "inserting white \n";
 		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, -130.0f));
 		ballToBeInserted->ballPosition = glm::vec3(0.0f, 0.0f, -130.0f);
 		ballToBeInserted->movementVector = glm::vec3(0.0);
 		
 	}
+	if (ballToBeInserted->id == 16){
+		std::cout << "inserting color \n";
+		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(30.0f, 0.0f, -100.0f));
+		ballToBeInserted->ballPosition = glm::vec3(30.0f, 0.0f, -100.0f);
+		ballToBeInserted->movementVector = glm::vec3(0.0);
+
+	}
+	if (ballToBeInserted->id == 17){
+		std::cout << "inserting color \n";
+		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, -100.0f));
+		ballToBeInserted->ballPosition = glm::vec3(0.0f, 0.0f, -100.0f);
+		ballToBeInserted->movementVector = glm::vec3(0.0);
+
+	}
+	if (ballToBeInserted->id == 18){
+		std::cout << "inserting color \n";
+		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(-30.0f, 0.0f, -100.0f));
+		ballToBeInserted->ballPosition = glm::vec3(-30.0f, 0.0f, -100.0f);
+		ballToBeInserted->movementVector = glm::vec3(0.0);
+
+	}
+	if (ballToBeInserted->id == 19){
+		std::cout << "inserting color \n";
+		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, 0.0f));
+		ballToBeInserted->ballPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+		ballToBeInserted->movementVector = glm::vec3(0.0);
+
+	}
+	if (ballToBeInserted->id == 20){
+		std::cout << "inserting color \n";
+		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, 90.0f));
+		ballToBeInserted->ballPosition = glm::vec3(0.0f, 0.0f, 90.0f);
+		ballToBeInserted->movementVector = glm::vec3(0.0);
+
+	}
+	if (ballToBeInserted->id == 21){
+		std::cout << "inserting color \n";
+		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, 150.0f));
+		ballToBeInserted->ballPosition = glm::vec3(0.0f, 0.0f, 150.0f);
+		ballToBeInserted->movementVector = glm::vec3(0.0);
+
+	}
 }
+
+
+
+/*Ball yellowBall(16, glm::vec3(30, 0, -100));
+	Ball orangeBall(17, glm::vec3(0, 0, -100));
+	Ball greenBall(18, glm::vec3(-30, 0, -100));
+	Ball blueBall(19, glm::vec3(0, 0, 0));
+	Ball pinkBall(20, glm::vec3(0, 0, 90));
+	Ball blackBall(21, glm::vec3(0, 0, 150));*/
