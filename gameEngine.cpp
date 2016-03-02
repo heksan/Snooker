@@ -115,7 +115,7 @@ void checkBallCollisions(std::list<Ball*> listOfBalls){
 	for (std::list<Ball*>::iterator ballOne = listOfBalls.begin(); ballOne != listOfBalls.end(); ballOne++){
 		for (std::list<Ball*>::iterator ballTwo = listOfBalls.begin(); ballTwo != listOfBalls.end(); ballTwo++){
 		//for (std::list<Ball*>::iterator ballTwo = std::find(listOfBalls.begin(), listOfBalls.end(), (*ballOne)); ballTwo != listOfBalls.end(); ballTwo++){
-			//if ((*ballTwo)->id != (*ballOne)->id){can and will be fixed
+			if ((*ballTwo)->id != (*ballOne)->id){//can and will be fixed
 				if (glm::distance((*ballTwo)->ballPosition, (*ballOne)->ballPosition) < 2 * ballRadius){
 					//4 ways of ensuring no infinite collisions - happens when ball travel too fast and is caught "inside" other ball forever
 					//slowing down(solves part of problem)
@@ -127,7 +127,7 @@ void checkBallCollisions(std::list<Ball*> listOfBalls){
 					//both stationary,caused by backtracking of other balls
 					if (glm::length((*ballOne)->movementVector) == 0.0 && (glm::length((*ballTwo)->movementVector) == 0.0)){
 						collideStationary(*ballOne, *ballTwo);
-
+						std::cout << (*ballOne)->id << " and " << (*ballTwo)->id << " stuck, moving from " << glm::distance((*ballTwo)->ballPosition, (*ballOne)->ballPosition) << " to closest acceptable pos\n";
 					}
 					//both moving
 					if (glm::length((*ballOne)->movementVector) > 0.0 && (glm::length((*ballTwo)->movementVector) > 0.0)){
@@ -143,7 +143,7 @@ void checkBallCollisions(std::list<Ball*> listOfBalls){
 					}
 				}
 				
-			//}
+			}
 		}
 	}
 }
@@ -217,9 +217,11 @@ void collideStationary(Ball* ballOne, Ball* ballTwo){
 			ballTwo->matrix = glm::translate(ballTwo->matrix, (newBallTwoPosition - ballTwo->ballPosition));
 			ballOne->ballPosition = newBallOnePosition;
 			ballTwo->ballPosition = newBallTwoPosition;
+			std::cout << " successfully moved back two stationary balls, new distance is" << glm::distance(ballOne->ballPosition, ballTwo->ballPosition) << "\n";
 			break;
 		}
 	}
+	
 }
 
 
@@ -228,19 +230,20 @@ void collideStationary(Ball* ballOne, Ball* ballTwo){
 //only ball hitting is moved backwards until distance is > 2*ballRadius - more precise than moving 2 backwards
 //assumes no rotation hence 90deg between balls after collision, kinetic energy is equally divided between balls - same speed
 void collideOneMoving(Ball* ballOne, Ball* ballTwo){
-
+	
 	glm::vec3 stepBack = (glm::normalize(ballOne->movementVector) / precisionSteps)*ballRadius*2.0f;
 	glm::vec3 newBallPosition = ballOne->ballPosition;
 	//trace back to collision point
-	for (int i = 0; i < precisionSteps; i++){
+	for (int i = 0; i < precisionSteps*2; i++){// crossing on the further half of the ball requires more backtracking, hence *2
 		newBallPosition = newBallPosition - stepBack;
 		if (glm::distance(newBallPosition, ballTwo->ballPosition) > 2 * ballRadius){
 			ballOne->matrix = glm::translate(ballOne->matrix, (newBallPosition - ballOne->ballPosition));
 			ballOne->ballPosition = newBallPosition;
+			std::cout << " successfully moved back two balls, new distance is" << glm::distance(newBallPosition, ballTwo->ballPosition)<<"\n";
 			break;
 		}
 	}
-
+	//std::cout << " final distance is" << glm::distance(ballOne->ballPosition, ballTwo->ballPosition) << "\n";
 	//calculate and set new movement vectors
 	double angle = atan2(ballOne->ballPosition.x - ballTwo->ballPosition.x, ballOne->ballPosition.z - ballTwo->ballPosition.z);
 	float speed = glm::length(ballOne->movementVector);

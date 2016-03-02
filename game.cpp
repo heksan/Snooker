@@ -49,11 +49,24 @@ int main(void)
 	std::list<Ball*> listOfRePreacableBalls; //here goes white and all colours besides red
 	Ball cueBall(0, glm::vec3(0, 0, -130));
 	
-	Ball justAnballTwo(2, glm::vec3(12, 0, 12));
-	Ball justAnballTwo2(3, glm::vec3(18, 0, 18));
-	Ball justAnballTwo3(4, glm::vec3(20, 0, 30));
+	Ball redBall1(1, glm::vec3(0, 0, 96));
+	Ball redBall2(2, glm::vec3(4, 0, 102));
+	Ball redBall3(3, glm::vec3(-4, 0, 102));
+	Ball redBall4(4, glm::vec3(0, 0, 108));
+	Ball redBall5(5, glm::vec3(6, 0, 108));
+	Ball redBall6(6, glm::vec3(-6, 0, 108));
+	Ball redBall7(7, glm::vec3(4, 0, 114));
+	Ball redBall8(8, glm::vec3(10, 0, 114));
+	Ball redBall9(9, glm::vec3(-4, 0, 114));
+	Ball redBall10(10, glm::vec3(-10, 0, 114));
+	Ball redBall11(11, glm::vec3(0, 0, 120));
+	Ball redBall12(12, glm::vec3(6, 0, 120));
+	Ball redBall13(13, glm::vec3(12, 0, 120));
+	Ball redBall14(14, glm::vec3(-6, 0, 120));
+	Ball redBall15(15, glm::vec3(-12, 0, 120));
 
-	/////////////////test balls
+
+	/////////////////colour balls
 	//16 yellow
 	//17 orange
 	//18 green
@@ -68,9 +81,21 @@ int main(void)
 	Ball blackBall(21, glm::vec3(0, 0, 150));
 
 	listOfBalls.push_back(&cueBall);
-	listOfBalls.push_back(&justAnballTwo);
-	listOfBalls.push_back(&justAnballTwo2);
-	listOfBalls.push_back(&justAnballTwo3);
+	listOfBalls.push_back(&redBall1);
+	listOfBalls.push_back(&redBall2);
+	listOfBalls.push_back(&redBall3);
+	listOfBalls.push_back(&redBall4);
+	listOfBalls.push_back(&redBall5);
+	listOfBalls.push_back(&redBall6);
+	listOfBalls.push_back(&redBall7);
+	listOfBalls.push_back(&redBall8);
+	listOfBalls.push_back(&redBall9);
+	listOfBalls.push_back(&redBall10);
+	listOfBalls.push_back(&redBall11);
+	listOfBalls.push_back(&redBall12);
+	listOfBalls.push_back(&redBall13);
+	listOfBalls.push_back(&redBall14);
+	listOfBalls.push_back(&redBall15);
 	listOfBalls.push_back(&yellowBall);
 	listOfBalls.push_back(&orangeBall);
 	listOfBalls.push_back(&greenBall);
