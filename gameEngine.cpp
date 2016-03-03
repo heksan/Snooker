@@ -156,7 +156,7 @@ std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls){
 		if ((abs((*ball)->ballPosition.x) >= tableWidth - ballRadius)){
 			//determine wheter there is a pocket instead of wall
 			if (abs((*ball)->ballPosition.z) >= pocketRadius && abs((*ball)->ballPosition.z) <= (tableLength - pocketRadius)){//change 7.5 as its a test value
-				glm::vec3 stepBack = (*ball)->movementVector / precisionSteps;
+				glm::vec3 stepBack = (*ball)->movementVector / precisionSteps * 2.0f *ballRadius;
 				glm::vec3 newBallPosition = (*ball)->ballPosition;
 				for (int i = 0; i < precisionSteps; i++){
 					newBallPosition = newBallPosition - (stepBack*2.0f);
@@ -204,8 +204,8 @@ std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls){
 void collideStationary(Ball* ballOne, Ball* ballTwo){
 
 	glm::vec3 movementVector = glm::normalize(glm::vec3(ballTwo->ballPosition.x - ballOne->ballPosition.x, 0.0f, ballTwo->ballPosition.z - ballOne->ballPosition.z));
-	glm::vec3 stepBackOne = (movementVector / precisionSteps)*ballRadius;
-	glm::vec3 stepBackTwo = (movementVector / precisionSteps)*-ballRadius;
+	glm::vec3 stepBackOne = (movementVector / precisionSteps)*ballRadius*2.0f;
+	glm::vec3 stepBackTwo = (movementVector / precisionSteps)*-ballRadius*2.0f;
 	glm::vec3 newBallOnePosition = ballOne->ballPosition;
 	glm::vec3 newBallTwoPosition = ballTwo->ballPosition;
 
@@ -239,7 +239,7 @@ void collideOneMoving(Ball* ballOne, Ball* ballTwo){
 		if (glm::distance(newBallPosition, ballTwo->ballPosition) > 2 * ballRadius){
 			ballOne->matrix = glm::translate(ballOne->matrix, (newBallPosition - ballOne->ballPosition));
 			ballOne->ballPosition = newBallPosition;
-			std::cout << " successfully moved back two balls, new distance is" << glm::distance(newBallPosition, ballTwo->ballPosition)<<"\n";
+			//std::cout << " successfully moved back two balls, new distance is" << glm::distance(newBallPosition, ballTwo->ballPosition)<<"\n";
 			break;
 		}
 	}
@@ -249,7 +249,7 @@ void collideOneMoving(Ball* ballOne, Ball* ballTwo){
 	float speed = glm::length(ballOne->movementVector);
 	glm::vec3 newMovementVector = glm::vec3(sin(angle + M_PI), 0, cos(angle + M_PI));
 	ballTwo->movementVector = glm::normalize(newMovementVector)*speed*(0.5f);
-	glm::vec3 vecThree = ballOne->movementVector - ballTwo->movementVector;
+	glm::vec3 vecThree = glm::normalize(ballOne->movementVector) - glm::normalize(ballTwo->movementVector);
 	vecThree = glm::normalize(vecThree);
 	ballOne->movementVector = vecThree*speed*(0.5f);
 
@@ -260,8 +260,8 @@ void collideOneMoving(Ball* ballOne, Ball* ballTwo){
 //Balls switch movement vectors
 void collideMoving(Ball *ballOne, Ball *ballTwo){
 
-	glm::vec3 stepBackOne = (ballOne->movementVector / precisionSteps)*2.0f;
-	glm::vec3 stepBackTwo = (ballTwo->movementVector / precisionSteps)*2.0f;
+	glm::vec3 stepBackOne = (glm::normalize(ballOne->movementVector) *2.0f * ballRadius)/precisionSteps;
+	glm::vec3 stepBackTwo = (glm::normalize(ballTwo->movementVector) *2.0f * ballRadius) / precisionSteps;
 	glm::vec3 newBallOnePosition = ballOne->ballPosition;
 	glm::vec3 newBallTwoPosition = ballTwo->ballPosition;
 	//trace back to collision point
@@ -275,10 +275,11 @@ void collideMoving(Ball *ballOne, Ball *ballTwo){
 			ballTwo->ballPosition = newBallTwoPosition;
 			recalculateDeceleration(ballOne);
 			recalculateDeceleration(ballTwo);
+			//std::cout << " successfully moved back two moving balls, new distance is" << glm::distance(ballOne->ballPosition, ballTwo->ballPosition) << "\n";
 			break;
 		}
 	}
-
+	//std::cout << "two moving balls, new distance is" << glm::distance(ballOne->ballPosition, ballTwo->ballPosition) << "\n";
 	glm::vec3 placeholder = ballOne->movementVector;
 	ballOne->movementVector = ballTwo->movementVector;
 	ballTwo->movementVector = placeholder;
@@ -290,7 +291,6 @@ void changeDirection(Ball* ball, char xORz){
 	if (xORz == 'x'){
 		ball->movementVector.x = -ball->movementVector.x;
 		recalculateDeceleration(ball);
-
 	}
 	if (xORz == 'z'){
 		ball->movementVector.z = -ball->movementVector.z;
@@ -380,49 +380,42 @@ void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list <Ball*> listO
 //after reinsertion checks inserted ball id and places it on designated position
 void moveBallToStartingPosition(Ball *ballToBeInserted){
 	if (ballToBeInserted->id == 0){
-		std::cout << "inserting white \n";
 		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, -130.0f));
 		ballToBeInserted->ballPosition = glm::vec3(0.0f, 0.0f, -130.0f);
 		ballToBeInserted->movementVector = glm::vec3(0.0);
 		
 	}
 	if (ballToBeInserted->id == 16){
-		std::cout << "inserting color \n";
 		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(30.0f, 0.0f, -100.0f));
 		ballToBeInserted->ballPosition = glm::vec3(30.0f, 0.0f, -100.0f);
 		ballToBeInserted->movementVector = glm::vec3(0.0);
 
 	}
 	if (ballToBeInserted->id == 17){
-		std::cout << "inserting color \n";
 		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, -100.0f));
 		ballToBeInserted->ballPosition = glm::vec3(0.0f, 0.0f, -100.0f);
 		ballToBeInserted->movementVector = glm::vec3(0.0);
 
 	}
 	if (ballToBeInserted->id == 18){
-		std::cout << "inserting color \n";
 		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(-30.0f, 0.0f, -100.0f));
 		ballToBeInserted->ballPosition = glm::vec3(-30.0f, 0.0f, -100.0f);
 		ballToBeInserted->movementVector = glm::vec3(0.0);
 
 	}
 	if (ballToBeInserted->id == 19){
-		std::cout << "inserting color \n";
 		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, 0.0f));
 		ballToBeInserted->ballPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 		ballToBeInserted->movementVector = glm::vec3(0.0);
 
 	}
 	if (ballToBeInserted->id == 20){
-		std::cout << "inserting color \n";
 		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, 90.0f));
 		ballToBeInserted->ballPosition = glm::vec3(0.0f, 0.0f, 90.0f);
 		ballToBeInserted->movementVector = glm::vec3(0.0);
 
 	}
 	if (ballToBeInserted->id == 21){
-		std::cout << "inserting color \n";
 		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, 150.0f));
 		ballToBeInserted->ballPosition = glm::vec3(0.0f, 0.0f, 150.0f);
 		ballToBeInserted->movementVector = glm::vec3(0.0);

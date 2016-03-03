@@ -225,8 +225,9 @@ int main(void)
 			checkStop(listOfBalls);
 			ballsMoving = checkStable(listOfBalls);
 			listOfBalls = checkWallCollisions(listOfBalls);
-			checkBallCollisions(listOfBalls);
 			moveBalls(listOfBalls);
+			checkBallCollisions(listOfBalls);
+			
 			
 		}
 		
