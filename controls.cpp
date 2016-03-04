@@ -131,3 +131,10 @@ glm::vec2 castRayThroughMouse(){
 	}
 	return glm::vec2(0.0f, 0.0f);
 }
+
+void checkClick(bool& foulCommitted){
+
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS){
+		foulCommitted = false;
+	}
+}

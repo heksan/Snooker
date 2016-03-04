@@ -22,11 +22,13 @@ using namespace glm;
 #include "cueStick.h"
 #include "pocket.h"
 #include "gui.h"
+#include "player.h"
 
 
 GLFWwindow* window;
 bool ballsMoving = false;
 bool cueStickMoving = false;
+bool foulCommited = true;
 double speedVec = 1.0;
 float force = 7.0f;
 
@@ -39,6 +41,10 @@ int main(void)
 	glm::mat4 ProjectionMatrix;
 	glm::mat4 ViewMatrix;
 
+	// players
+	Player p1(1);
+	Player p2(2);
+	int currentPlayerID = p1.ID;
 
 	//table and stick
 	Table table;
@@ -160,7 +166,7 @@ int main(void)
 	}
 
 	// Ensure we can capture the escape key being pressed below
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_FALSE);
 
 	// Dark blue background
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
@@ -189,6 +195,7 @@ int main(void)
 	
 	//test gui
 	initPowerBar2D();
+	initPlayerIndicator2D();
 
 
 
@@ -202,6 +209,7 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(programID);
 		printPowerBar2D(force);
+		printPlayerIndicator2D(currentPlayerID);
 		glUseProgram(programID);
 		computeCameraMatricesFromInputs();
 		ProjectionMatrix = getProjectionMatrix();//refactor this and next line
@@ -209,7 +217,8 @@ int main(void)
 
 
 		//Main game loop//
-		if (!ballsMoving && !cueStickMoving){//stable
+
+		if (!ballsMoving && !cueStickMoving && !foulCommited){//stable
 			mouseRay = castRayThroughMouse();
 			relocateCueStick(mouseRay, cueStick, cueBall);
 			checkStart(cueStickMoving,force);
@@ -224,13 +233,16 @@ int main(void)
 		if (ballsMoving){
 			checkStop(listOfBalls);
 			ballsMoving = checkStable(listOfBalls);
-			listOfBalls = checkWallCollisions(listOfBalls);
+			listOfBalls = checkWallCollisions(listOfBalls,foulCommited,currentPlayerID);
 			moveBalls(listOfBalls);
 			checkBallCollisions(listOfBalls);
-			
-			
 		}
-		
+		if (foulCommited){
+			replacePocketedBalls(listOfBalls, listOfRePreacableBalls);
+			mouseRay = castRayThroughMouse();
+			relocateCueBall(mouseRay, cueBall);
+			checkClick(foulCommited);
+		}
 
 		////end of game loop//////
 		
@@ -256,14 +268,10 @@ int main(void)
 
 
 
-//notes
-//      REFACTOR BITCH
+///////////////////////////notes
 // setting up white ball
 // ref shader
 // ref matrices(view and proj)
-// make  speed smaller
-// fix ball collisions, works only when moving is checked first, fix everything
-//add more balls
 //gui - new shader needed for text
 //trace
 //rules and balls
@@ -273,10 +281,9 @@ int main(void)
 // fix controls
 // graphics should be better
 //
-//make different collor buffer datas depending on IDs
 //
 //
-//
+/////////////// if enough time:
 //angular velocity
 //mouse wheel
 //

@@ -75,6 +75,7 @@
     <ClCompile Include="ball.cpp" />
     <ClCompile Include="cueStick.cpp" />
     <ClCompile Include="gui.cpp" />
+    <ClCompile Include="player.cpp" />
     <ClCompile Include="pocket.cpp" />
     <ClCompile Include="table.cpp" />
     <ClCompile Include="game.cpp" />
@@ -88,6 +89,7 @@
     <ClInclude Include="controls.h" />
     <ClInclude Include="cueStick.h" />
     <ClInclude Include="gui.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="pocket.h" />
     <ClInclude Include="table.h" />
     <ClInclude Include="gameEngine.h" />

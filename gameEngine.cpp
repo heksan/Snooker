@@ -6,7 +6,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>   
 #include <list>
-extern bool stable;
 
 // Include GLM
 #include <glm/glm.hpp>
@@ -15,6 +14,7 @@ extern bool stable;
 #include <glm/gtx/transform.hpp>
 using namespace glm;
 
+//include my files
 #include "gameEngine.h"
 #include "ball.h" 
 
@@ -149,7 +149,7 @@ void checkBallCollisions(std::list<Ball*> listOfBalls){
 }
 
 //When ball moves slightly outside of table area it is moved back to closes "in-table" position and has its movement vector changed
-std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls){
+std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls,bool& foulCommited,int& currentPlayerID){
 
 	//loop checking collisions in a way there are no double comparisons
 	for (std::list<Ball*>::iterator ball = listOfBalls.begin(); ball != listOfBalls.end(); ball++){
@@ -169,6 +169,11 @@ std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls){
 				changeDirection(*ball, 'x');
 			}
 			else{
+				if ((*ball)->id == 0){
+					foulCommited = true;
+					std::cout << "foul, white in pocket \n";
+					currentPlayerID = changePlayers(currentPlayerID);
+				}
 				listOfBalls = removeBall(listOfBalls, *ball);
 				return listOfBalls;
 			}
@@ -191,6 +196,11 @@ std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls){
 				changeDirection(*ball, 'z');
 			}
 			else{//ball in pocket
+				if ((*ball)->id==0){
+					foulCommited = true;
+					std::cout << "foul, white in pocket \n";
+					currentPlayerID = changePlayers(currentPlayerID);
+				}
 				listOfBalls = removeBall(listOfBalls, *ball);
 				return listOfBalls;
 			}
@@ -378,6 +388,12 @@ void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list <Ball*> listO
 }
 
 //after reinsertion checks inserted ball id and places it on designated position
+/*Ball yellowBall(16, glm::vec3(30, 0, -100));
+Ball orangeBall(17, glm::vec3(0, 0, -100));
+Ball greenBall(18, glm::vec3(-30, 0, -100));
+Ball blueBall(19, glm::vec3(0, 0, 0));
+Ball pinkBall(20, glm::vec3(0, 0, 90));
+Ball blackBall(21, glm::vec3(0, 0, 150));*/
 void moveBallToStartingPosition(Ball *ballToBeInserted){
 	if (ballToBeInserted->id == 0){
 		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, -130.0f));
@@ -424,10 +440,24 @@ void moveBallToStartingPosition(Ball *ballToBeInserted){
 }
 
 
+void relocateCueBall(glm::vec2 mouseRay, Ball& cueball){
 
-/*Ball yellowBall(16, glm::vec3(30, 0, -100));
-	Ball orangeBall(17, glm::vec3(0, 0, -100));
-	Ball greenBall(18, glm::vec3(-30, 0, -100));
-	Ball blueBall(19, glm::vec3(0, 0, 0));
-	Ball pinkBall(20, glm::vec3(0, 0, 90));
-	Ball blackBall(21, glm::vec3(0, 0, 150));*/
+	if (mouseRay.y < -100.0f && mouseRay.y > -178.0f && mouseRay.x > -89.0f && mouseRay.x < 89.0f){
+
+		cueball.matrix = glm::translate(cueball.matrix, -cueball.ballPosition);
+
+		cueball.ballPosition.x = mouseRay.x;
+		cueball.ballPosition.z = mouseRay.y;
+
+		cueball.matrix = glm::translate(cueball.matrix, cueball.ballPosition);
+	}
+}
+
+int changePlayers(int currentPlayerID){
+	if (currentPlayerID == 1){
+		return 2;
+	}
+	else{
+		return 1;
+	}
+}
