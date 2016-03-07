@@ -45,6 +45,10 @@ int main(void)
 	Player p1(1);
 	Player p2(2);
 	int currentPlayerID = p1.ID;
+	Player currentPlayer = p1;
+	std::list<Player*> listOfPlayers;
+	listOfPlayers.push_back(&p1);
+	listOfPlayers.push_back(&p2);
 
 	//table and stick
 	Table table;
@@ -200,21 +204,14 @@ int main(void)
 
 
 	do{
-
-		
-
-		
-		
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(programID);
+		//glUseProgram(programID);
 		printPowerBar2D(force);
 		printPlayerIndicator2D(currentPlayerID);
 		glUseProgram(programID);
 		computeCameraMatricesFromInputs();
 		ProjectionMatrix = getProjectionMatrix();//refactor this and next line
 		ViewMatrix = getViewMatrix();
-
 
 		//Main game loop//
 
@@ -232,20 +229,28 @@ int main(void)
 		}
 		if (ballsMoving){
 			checkStop(listOfBalls);
-			ballsMoving = checkStable(listOfBalls);
-			listOfBalls = checkWallCollisions(listOfBalls,foulCommited,currentPlayerID);
+			ballsMoving = checkStable(listOfBalls); // sets ballsMoving to false if no ball moves
+			listOfBalls = checkWallCollisions(listOfBalls,foulCommited,listOfPlayers,currentPlayer);
 			moveBalls(listOfBalls);
-			checkBallCollisions(listOfBalls);
+			checkBallCollisions(listOfBalls); //add foulcommited and list of players, add collision count to player class
 		}
 		if (foulCommited){
+			currentPlayerID = selectOtherPlayer(currentPlayer);//hold current player until next turn
 			replacePocketedBalls(listOfBalls, listOfRePreacableBalls);
 			mouseRay = castRayThroughMouse();
 			relocateCueBall(mouseRay, cueBall);
 			checkClick(foulCommited);
+			if (foulCommited == false){
+				if (currentPlayer.ID == 1){
+					currentPlayer = p2;
+				}
+				else{
+					currentPlayer = p1;
+				}
+			}
 		}
 
 		////end of game loop//////
-		
 		
 		drawBalls(listOfBalls, MatrixID, ViewMatrix, ProjectionMatrix);
 		drawTable(table, MatrixID, ViewMatrix, ProjectionMatrix);
@@ -258,7 +263,6 @@ int main(void)
 
 	} while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
 
-
 	cleanupBuffers(listOfBalls);
 	glDeleteProgram(programID);
 	glDeleteVertexArrays(1, &VertexArrayID);
@@ -269,16 +273,25 @@ int main(void)
 
 
 ///////////////////////////notes
-// setting up white ball
+// 
 // ref shader
-// ref matrices(view and proj)
+// 
 //gui - new shader needed for text
 //trace
-//rules and balls
+//
+
+
 //points
+//void addPoints(player, num)
+//void resetHittable(player)
+// void getPoints(ballID)
+
+
+//repleacable not repleacable when all red pocketed
+//
 // table can be static?
 ///
-// fix controls
+// 
 // graphics should be better
 //
 //

@@ -25,8 +25,16 @@ const float tableLength = 178.5f;
 const float precisionSteps = 200.0f;
 const float decelerationRate = 0.02f;
 
-glm::mat4 moveBall(Ball& ball){
+//Used to set initial movementVector and deceleration to cueBall,
+//movementVector is currently based on mouse position 
+void initMovement(float speedVec, glm::vec2 mouseRay, Ball& ball){
+	double angle = atan2(mouseRay.x - ball.ballPosition.x, mouseRay.y - ball.ballPosition.z);
+	ball.movementVector = glm::vec3(sin(angle + M_PI), 0, cos(angle + M_PI));
+	ball.movementVector = ball.movementVector * speedVec;
+	ball.deceleration = glm::normalize(ball.movementVector)*decelerationRate;
+}
 
+glm::mat4 moveBall(Ball& ball){
 	ball.matrix = glm::translate(ball.matrix, ball.movementVector);
 	ball.ballPosition = ball.ballPosition + ball.movementVector;
 	ball.movementVector.x = ball.movementVector.x*0.98f;
@@ -47,15 +55,10 @@ void moveBalls(std::list<Ball*> listOfBalls){
 	}
 }
 
-//Used to set initial movementVector and deceleration to cueBall,
-//movementVector is currently based on mouse position 
-void initMovement(float speedVec, glm::vec2 mouseRay, Ball& ball){
-	double angle = atan2(mouseRay.x - ball.ballPosition.x, mouseRay.y - ball.ballPosition.z);
-	ball.movementVector = glm::vec3(sin(angle + M_PI), 0, cos(angle + M_PI));
-	ball.movementVector = ball.movementVector * speedVec;
-	ball.deceleration = glm::normalize(ball.movementVector)*decelerationRate;
+//self explanatory, used after collisions
+void recalculateDeceleration(Ball* ball){
+	(ball)->deceleration = glm::normalize((ball)->movementVector)*decelerationRate;
 }
-
 
 bool checkStable(Ball ball){
 	return glm::length(ball.movementVector) <= 1.0;
@@ -63,7 +66,6 @@ bool checkStable(Ball ball){
 
 //Iterates through all balls, if any movementVector is > than 0 it returns false
 bool checkStable(std::list<Ball*> listOfBalls){
-
 	for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
 		if (glm::length((*currentBall)->movementVector) != 0){
 			return true;
@@ -76,7 +78,6 @@ bool checkStable(std::list<Ball*> listOfBalls){
 //Iterates through all balls, if angle between balls movementVector and deceleration is larger than 0,
 //hence in opposite direction, it sets both values to 0,0,0(stops the ball)
 void checkStop(std::list<Ball*> listOfBalls){
-
 	for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
 		if (glm::angle(glm::normalize((*currentBall)->movementVector), glm::normalize((*currentBall)->deceleration)) > 0.01f){
 			(*currentBall)->movementVector = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -91,7 +92,6 @@ void relocateMatrix(Ball& ball){
 
 //Initial matrix of any ball is centered at 0,0,0, , function moves it to ball.position
 void relocateMatrices(std::list<Ball*> listOfBalls){
-
 	for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
 		(*currentBall)->matrix = glm::translate((*currentBall)->matrix, (*currentBall)->ballPosition);
 	}
@@ -99,23 +99,17 @@ void relocateMatrices(std::list<Ball*> listOfBalls){
 }
 
 void relocateMatrices(std::list<Pocket*> listOfPockets){
-
 	for (std::list<Pocket*>::iterator currentPocket = listOfPockets.begin(); currentPocket != listOfPockets.end(); currentPocket++){
 		(*currentPocket)->matrix = glm::translate((*currentPocket)->matrix, (*currentPocket)->position);
 	}
 
 }
 
-
-
-//Checks if collisions happen and uses different methods depending on case
+//Checks if collisions happen and uses different methods depending on case, does double comparisons, fix?
 void checkBallCollisions(std::list<Ball*> listOfBalls){
-
-	//loop checking collisions in a way there are no double comparisons
 	for (std::list<Ball*>::iterator ballOne = listOfBalls.begin(); ballOne != listOfBalls.end(); ballOne++){
 		for (std::list<Ball*>::iterator ballTwo = listOfBalls.begin(); ballTwo != listOfBalls.end(); ballTwo++){
-		//for (std::list<Ball*>::iterator ballTwo = std::find(listOfBalls.begin(), listOfBalls.end(), (*ballOne)); ballTwo != listOfBalls.end(); ballTwo++){
-			if ((*ballTwo)->id != (*ballOne)->id){//can and will be fixed
+			if ((*ballTwo)->id != (*ballOne)->id){
 				if (glm::distance((*ballTwo)->ballPosition, (*ballOne)->ballPosition) < 2 * ballRadius){
 					//4 ways of ensuring no infinite collisions - happens when ball travel too fast and is caught "inside" other ball forever
 					//slowing down(solves part of problem)
@@ -148,68 +142,6 @@ void checkBallCollisions(std::list<Ball*> listOfBalls){
 	}
 }
 
-//When ball moves slightly outside of table area it is moved back to closes "in-table" position and has its movement vector changed
-std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls,bool& foulCommited,int& currentPlayerID){
-
-	//loop checking collisions in a way there are no double comparisons
-	for (std::list<Ball*>::iterator ball = listOfBalls.begin(); ball != listOfBalls.end(); ball++){
-		if ((abs((*ball)->ballPosition.x) >= tableWidth - ballRadius)){
-			//determine wheter there is a pocket instead of wall
-			if (abs((*ball)->ballPosition.z) >= pocketRadius && abs((*ball)->ballPosition.z) <= (tableLength - pocketRadius)){//change 7.5 as its a test value
-				glm::vec3 stepBack = (*ball)->movementVector / precisionSteps * 2.0f *ballRadius;
-				glm::vec3 newBallPosition = (*ball)->ballPosition;
-				for (int i = 0; i < precisionSteps; i++){
-					newBallPosition = newBallPosition - (stepBack*2.0f);
-					if (abs(newBallPosition.x) <= tableWidth - ballRadius){
-						(*ball)->matrix = glm::translate((*ball)->matrix, (newBallPosition - (*ball)->ballPosition));
-						(*ball)->ballPosition = newBallPosition;
-						break;
-					}
-				}
-				changeDirection(*ball, 'x');
-			}
-			else{
-				if ((*ball)->id == 0){
-					foulCommited = true;
-					std::cout << "foul, white in pocket \n";
-					currentPlayerID = changePlayers(currentPlayerID);
-				}
-				listOfBalls = removeBall(listOfBalls, *ball);
-				return listOfBalls;
-			}
-		}
-
-		if (abs((*ball)->ballPosition.z) >= (tableLength - ballRadius)){
-			if (abs((*ball)->ballPosition.x) <= (tableWidth - pocketRadius)){
-				//trace back to contact point
-				glm::vec3 stepBack = (*ball)->movementVector / precisionSteps;
-				glm::vec3 newBallPosition = (*ball)->ballPosition;
-				for (int i = 0; i < precisionSteps; i++){
-					newBallPosition = newBallPosition - (stepBack*2.0f);
-					if (abs(newBallPosition.z) <= tableLength - ballRadius){
-						(*ball)->matrix = glm::translate((*ball)->matrix, (newBallPosition - (*ball)->ballPosition));
-						(*ball)->ballPosition = newBallPosition;
-						break;
-					}
-
-				}
-				changeDirection(*ball, 'z');
-			}
-			else{//ball in pocket
-				if ((*ball)->id==0){
-					foulCommited = true;
-					std::cout << "foul, white in pocket \n";
-					currentPlayerID = changePlayers(currentPlayerID);
-				}
-				listOfBalls = removeBall(listOfBalls, *ball);
-				return listOfBalls;
-			}
-		}
-	}
-	return listOfBalls;
-}
-
-
 //If two balls are stuck together they are moved apart until distance between them is larger than 2* ballRadius
 void collideStationary(Ball* ballOne, Ball* ballTwo){
 
@@ -231,20 +163,17 @@ void collideStationary(Ball* ballOne, Ball* ballTwo){
 			break;
 		}
 	}
-	
+
 }
-
-
 
 //Var order - ball hitting, ball hitted
 //only ball hitting is moved backwards until distance is > 2*ballRadius - more precise than moving 2 backwards
 //assumes no rotation hence 90deg between balls after collision, kinetic energy is equally divided between balls - same speed
 void collideOneMoving(Ball* ballOne, Ball* ballTwo){
-	
 	glm::vec3 stepBack = (glm::normalize(ballOne->movementVector) / precisionSteps)*ballRadius*2.0f;
 	glm::vec3 newBallPosition = ballOne->ballPosition;
 	//trace back to collision point
-	for (int i = 0; i < precisionSteps*2; i++){// crossing on the further half of the ball requires more backtracking, hence *2
+	for (int i = 0; i < precisionSteps * 2; i++){// crossing on the further half of the ball requires more backtracking, hence *2
 		newBallPosition = newBallPosition - stepBack;
 		if (glm::distance(newBallPosition, ballTwo->ballPosition) > 2 * ballRadius){
 			ballOne->matrix = glm::translate(ballOne->matrix, (newBallPosition - ballOne->ballPosition));
@@ -269,8 +198,7 @@ void collideOneMoving(Ball* ballOne, Ball* ballTwo){
 
 //Balls switch movement vectors
 void collideMoving(Ball *ballOne, Ball *ballTwo){
-
-	glm::vec3 stepBackOne = (glm::normalize(ballOne->movementVector) *2.0f * ballRadius)/precisionSteps;
+	glm::vec3 stepBackOne = (glm::normalize(ballOne->movementVector) *2.0f * ballRadius) / precisionSteps;
 	glm::vec3 stepBackTwo = (glm::normalize(ballTwo->movementVector) *2.0f * ballRadius) / precisionSteps;
 	glm::vec3 newBallOnePosition = ballOne->ballPosition;
 	glm::vec3 newBallTwoPosition = ballTwo->ballPosition;
@@ -295,6 +223,50 @@ void collideMoving(Ball *ballOne, Ball *ballTwo){
 	ballTwo->movementVector = placeholder;
 }
 
+//When ball moves slightly outside of table area it is moved back to closes "in-table" position and has its movement vector changed
+std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls, bool& foulCommited, std::list<Player*>& listOfPlayers, Player& currentPlayer){
+	for (std::list<Ball*>::iterator ball = listOfBalls.begin(); ball != listOfBalls.end(); ball++){
+		if ((abs((*ball)->ballPosition.x) >= tableWidth - ballRadius)){
+			//determine wheter there is a wall (if not, there is a pocket
+			if (abs((*ball)->ballPosition.z) >= pocketRadius && abs((*ball)->ballPosition.z) <= (tableLength - pocketRadius)){//change 7.5 as its a test value
+				traceBackToWallContackPoint(ball);
+				changeDirection(*ball, 'x');
+			}
+			else{
+				decidePointsAndFoulsPockets((*ball)->id, foulCommited, listOfPlayers, currentPlayer);
+				listOfBalls = removeBall(listOfBalls, *ball);
+				return listOfBalls;
+			}
+		}
+		//same for shorter sid of the table(no pocket in the middle)
+		if (abs((*ball)->ballPosition.z) >= (tableLength - ballRadius)){
+			if (abs((*ball)->ballPosition.x) <= (tableWidth - pocketRadius)){
+				traceBackToWallContackPoint(ball);
+				changeDirection(*ball, 'z');
+			}
+			else{
+				decidePointsAndFoulsPockets((*ball)->id, foulCommited, listOfPlayers, currentPlayer);
+				listOfBalls = removeBall(listOfBalls, *ball);
+				return listOfBalls;
+			}
+		}
+	}
+	return listOfBalls;
+}
+
+void traceBackToWallContackPoint(std::list<Ball*>::iterator ball){
+	glm::vec3 stepBack = (*ball)->movementVector / precisionSteps * 2.0f *ballRadius;
+	glm::vec3 newBallPosition = (*ball)->ballPosition;
+	for (int i = 0; i < precisionSteps; i++){
+		newBallPosition = newBallPosition - (stepBack*2.0f);
+		if (abs(newBallPosition.x) <= tableWidth - ballRadius){
+			(*ball)->matrix = glm::translate((*ball)->matrix, (newBallPosition - (*ball)->ballPosition));
+			(*ball)->ballPosition = newBallPosition;
+			break;
+		}
+	}
+}
+
 //self explanatory
 void changeDirection(Ball* ball, char xORz){
 
@@ -306,11 +278,6 @@ void changeDirection(Ball* ball, char xORz){
 		ball->movementVector.z = -ball->movementVector.z;
 		recalculateDeceleration(ball);
 	}
-}
-
-//self explanatory
-void recalculateDeceleration(Ball* ball){
-	(ball)->deceleration = glm::normalize((ball)->movementVector)*decelerationRate;
 }
 
 void relocateCueStick(glm::vec2 mouseRay, CueStick& cueStick, Ball cueball){
@@ -439,7 +406,6 @@ void moveBallToStartingPosition(Ball *ballToBeInserted){
 	}
 }
 
-
 void relocateCueBall(glm::vec2 mouseRay, Ball& cueball){
 
 	if (mouseRay.y < -100.0f && mouseRay.y > -178.0f && mouseRay.x > -89.0f && mouseRay.x < 89.0f){
@@ -459,5 +425,66 @@ int changePlayers(int currentPlayerID){
 	}
 	else{
 		return 1;
+	}
+}
+
+int selectOtherPlayer(Player currentPlayer){
+	if (currentPlayer.ID == 1){
+		return 2;
+	}
+	else{
+		return 1;
+	}
+}
+
+void decidePointsAndFoulsPockets(int ballID,bool& foulCommited, std::list<Player*>& listOfPlayers, Player& currentPlayer){
+	if (ballID == 0){
+		foulCommited = true;
+		std::cout << "foul \n";
+		std::cout << "point for Slytherin \n";
+		resetPocketable(listOfPlayers);
+	}
+	if (ballID >= 1 && ballID <= 15){
+		if (currentPlayer.pocketableBalls == 0){
+			//point to gryffindor
+			std::cout << "point for Gryffindor \n";
+			changePocketable(currentPlayer);
+		}
+		else{
+			std::cout << "point for Slytherin \n";
+			resetPocketable(listOfPlayers);
+			std::cout << "foul \n";
+			foulCommited = true;
+		}
+	}
+	if (ballID >= 16){
+		if (currentPlayer.pocketableBalls == 1){
+			std::cout << "points(some points) for Gryffindor \n";//points to gryffindor do ball cases,
+			changePocketable(currentPlayer);
+		}
+		else{
+			std::cout << "points(some points) for Slytherin \n";
+			resetPocketable(listOfPlayers);
+			std::cout << "foul \n";
+			foulCommited = true;
+		}
+	}
+}
+
+void resetPocketable(std::list<Player*>& listOfPlayers){
+	for (std::list<Player*>::iterator player = listOfPlayers.begin(); player != listOfPlayers.end(); player++){
+		(*player)->pocketableBalls = 0;
+	}
+	std::cout << "allowed pocketable balls have been reset \n";
+}
+
+void changePocketable(Player& currentPlayer){
+	if (currentPlayer.pocketableBalls == 0){
+		currentPlayer.pocketableBalls = 1;
+		std::cout << "allowed pocketable balls have changed to 1 \n";
+	}
+	else{
+		currentPlayer.pocketableBalls = 0;
+		std::cout << "allowed pocketable balls have changed to 0 \n";
 	}
 }

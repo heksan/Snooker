@@ -13,17 +13,17 @@ using namespace glm;
 
 #include "controls.h"
 #include "gameEngine.h"
-const double screenWidth = 1024;
-const double screenHeight = 768;
+const float screenWidth = 1024.0f;
+const float screenHeight = 768.0f;
 const float FoV = 45.0f;
 const float speed = 45.0f;
 const float mouseSpeed = 0.005f;
 const float powerScaleFactor = 35.0f;
 
-double xpos = screenWidth / 2;
-double ypos = screenHeight / 2;
-double prevxpos = screenWidth / 2;
-double prevypos = screenHeight / 2;
+double xpos = screenWidth / 2.0f;
+double ypos = screenHeight / 2.0f;
+double prevxpos = screenWidth / 2.0f;
+double prevypos = screenHeight / 2.0f;
 
 glm::vec3 position = glm::vec3(100, 200, -5);
 glm::vec3 direction;
@@ -45,7 +45,7 @@ void checkStart(bool& cueStickMoving,float& force){
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS){
 		if (xpos>999.0f && screenHeight - ypos>200.0f && screenHeight-ypos<575.0f){
-			force = (screenHeight - ypos - 200) / powerScaleFactor; 
+			force = (screenHeight - float(ypos) - 200.0f) / powerScaleFactor; 
 			//std::cout << force<<"\n";
 		}
 		else{
@@ -112,8 +112,8 @@ void computeCameraMatricesFromInputs(){
 //returns 2d point (x,z) where ray intersects with y=0 plane - not finished
 glm::vec2 castRayThroughMouse(){
 
-	float x = (2.0f * xpos) / screenWidth - 1.0;
-	float y = 1.0f - (2.0f * ypos) / screenHeight;
+	float x = (2.0f * float(xpos)) / screenWidth - 1.0f;
+	float y = 1.0f - (2.0f * float(ypos)) / screenHeight;
 	glm::vec4 rayEnd = vec4(x, y, -1.0, 1.0);
 	glm::vec4 eye = glm::inverse(ProjectionMatrix) * rayEnd;
 	eye = vec4(eye.x, eye.y, -1.0, 0.0);

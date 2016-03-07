@@ -4,29 +4,53 @@
 #include "ball.h"
 #include "cueStick.h"
 #include "pocket.h"
+#include "player.h"
 
+//moving, slowing down
+glm::mat4 moveBall(Ball& ball);
+void initMovement(float speedVec, glm::vec2 mouseRay, Ball& ball);
 glm::mat4 moveBall(Ball& ball);
 void moveBalls(std::list<Ball*> listOfBalls);
-void initMovement(float speedVec, glm::vec2 mouseRay, Ball& ball);
+void recalculateDeceleration(Ball* ball);
+
+//stopiing ball, checking if all balls have stopped
 bool checkStable(std::list<Ball*> listOfBalls);
 void checkStop(std::list<Ball*> listOfBalls);
 bool checkStable(Ball ball);
+
+//Moving meshes
 void relocateMatrix(Ball& ball);
 void relocateMatrices(std::list<Ball*> listOfBalls);
 void relocateMatrices(std::list<Pocket*> listOfPockets);
+
+//ball to ball collisions
 void checkBallCollisions(std::list<Ball*> listOfBalls);
-std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls,bool& foulCommited,int& currentPlayerID);
 void collideOneMoving(Ball* ballOne, Ball* ballTwo);
 void collideStationary(Ball* ballOne, Ball* ballTwo);
 void collideMoving(Ball *ballOne, Ball  *ballTwo);
+
+//ball to wall collisions
+std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls,bool& foulCommited,std::list<Player*>& listOfPlayers, Player& currentPlayer);
+void traceBackToWallContackPoint(std::list<Ball*>::iterator ball);
 void changeDirection(Ball* ball, char xORz);
-void recalculateDeceleration(Ball* ball);
+
+//cueStick Movement
 void relocateCueStick(glm::vec2 mouseRay,CueStick& cueStick,Ball ball);
 void moveCueStick(CueStick& cueStick,float force,bool& ballsMoving,bool& cueStickMoving);
 void moveStickToOrigin(CueStick& cueStick);
+
+// methods used after pocketing a ball
 std::list <Ball*> removeBall(std::list <Ball*> listOfBalls, Ball* ball);
 void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list <Ball*> listOfRepleacableBalls);
 void moveBallToStartingPosition(Ball *ballToBeInserted);
 void relocateCueBall(glm::vec2 mouseRay, Ball& cueball);
+
+//players
 int changePlayers(int currentPlayerID);
+int selectOtherPlayer(Player currentPlayer);
+
+//points, fouls and game rules
+void decidePointsAndFoulsPockets(int ballID, bool& foulCommited, std::list<Player*>& listOfPlayers, Player& currentPlayer);
+void resetPocketable(std::list<Player*>& listOfPlayers);
+void changePocketable(Player& currentPlayer);
 #endif

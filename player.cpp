@@ -13,5 +13,8 @@ Player::Player(int Id)
 {
 	ID = Id;
 	points = 0;
+	collisionCount = 0;
+	pocketableBalls = 0;
+	firstHitBallID = 0;
 
 }
