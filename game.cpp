@@ -45,10 +45,8 @@ int main(void)
 	Player p1(1);
 	Player p2(2);
 	int currentPlayerID = p1.ID;
-	Player currentPlayer = p1;
-	std::list<Player*> listOfPlayers;
-	listOfPlayers.push_back(&p1);
-	listOfPlayers.push_back(&p2);
+	Player currentPlayer = p2;
+	Player otherPlayer = p1;
 
 	//table and stick
 	Table table;
@@ -230,7 +228,7 @@ int main(void)
 		if (ballsMoving){
 			checkStop(listOfBalls);
 			ballsMoving = checkStable(listOfBalls); // sets ballsMoving to false if no ball moves
-			listOfBalls = checkWallCollisions(listOfBalls,foulCommited,listOfPlayers,currentPlayer);
+			listOfBalls = checkWallCollisions(listOfBalls, foulCommited, otherPlayer, currentPlayer);
 			moveBalls(listOfBalls);
 			checkBallCollisions(listOfBalls); //add foulcommited and list of players, add collision count to player class
 		}
@@ -241,12 +239,10 @@ int main(void)
 			relocateCueBall(mouseRay, cueBall);
 			checkClick(foulCommited);
 			if (foulCommited == false){
-				if (currentPlayer.ID == 1){
-					currentPlayer = p2;
-				}
-				else{
-					currentPlayer = p1;
-				}
+				//switch players
+					Player dummy = currentPlayer;
+					currentPlayer = otherPlayer;
+					otherPlayer = dummy;
 			}
 		}
 
@@ -273,7 +269,7 @@ int main(void)
 
 
 ///////////////////////////notes
-// 
+// change orange to brown and swap
 // ref shader
 // 
 //gui - new shader needed for text

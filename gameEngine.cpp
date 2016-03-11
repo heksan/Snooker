@@ -224,7 +224,7 @@ void collideMoving(Ball *ballOne, Ball *ballTwo){
 }
 
 //When ball moves slightly outside of table area it is moved back to closes "in-table" position and has its movement vector changed
-std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls, bool& foulCommited, std::list<Player*>& listOfPlayers, Player& currentPlayer){
+std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls, bool& foulCommited, Player& otherPlayer, Player& currentPlayer){
 	for (std::list<Ball*>::iterator ball = listOfBalls.begin(); ball != listOfBalls.end(); ball++){
 		if ((abs((*ball)->ballPosition.x) >= tableWidth - ballRadius)){
 			//determine wheter there is a wall (if not, there is a pocket
@@ -233,7 +233,7 @@ std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls, bool& foulCom
 				changeDirection(*ball, 'x');
 			}
 			else{
-				decidePointsAndFoulsPockets((*ball)->id, foulCommited, listOfPlayers, currentPlayer);
+				decidePointsAndFoulsPockets((*ball)->id, foulCommited, otherPlayer, currentPlayer);
 				listOfBalls = removeBall(listOfBalls, *ball);
 				return listOfBalls;
 			}
@@ -245,7 +245,7 @@ std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls, bool& foulCom
 				changeDirection(*ball, 'z');
 			}
 			else{
-				decidePointsAndFoulsPockets((*ball)->id, foulCommited, listOfPlayers, currentPlayer);
+				decidePointsAndFoulsPockets((*ball)->id, foulCommited, otherPlayer, currentPlayer);
 				listOfBalls = removeBall(listOfBalls, *ball);
 				return listOfBalls;
 			}
@@ -437,44 +437,50 @@ int selectOtherPlayer(Player currentPlayer){
 	}
 }
 
-void decidePointsAndFoulsPockets(int ballID,bool& foulCommited, std::list<Player*>& listOfPlayers, Player& currentPlayer){
+void decidePointsAndFoulsPockets(int ballID, bool& foulCommited, Player& otherPlayer, Player& currentPlayer){
 	if (ballID == 0){
 		foulCommited = true;
 		std::cout << "foul \n";
-		std::cout << "point for Slytherin \n";
-		resetPocketable(listOfPlayers);
+		givePoints(4, otherPlayer);
+		resetPocketable(otherPlayer);
+		resetPocketable(currentPlayer);
 	}
 	if (ballID >= 1 && ballID <= 15){
 		if (currentPlayer.pocketableBalls == 0){
-			//point to gryffindor
-			std::cout << "point for Gryffindor \n";
+			givePoints(1, currentPlayer);
 			changePocketable(currentPlayer);
 		}
 		else{
-			std::cout << "point for Slytherin \n";
-			resetPocketable(listOfPlayers);
 			std::cout << "foul \n";
+			givePoints(4, otherPlayer);
+			resetPocketable(otherPlayer);
+			resetPocketable(currentPlayer);
 			foulCommited = true;
 		}
 	}
 	if (ballID >= 16){
 		if (currentPlayer.pocketableBalls == 1){
-			std::cout << "points(some points) for Gryffindor \n";//points to gryffindor do ball cases,
+			std::cout << "points(some points) for current player \n";//points to gryffindor do ball cases,
+			int points = decidePoints(ballID);
+			givePoints(points, currentPlayer);
 			changePocketable(currentPlayer);
 		}
 		else{
-			std::cout << "points(some points) for Slytherin \n";
-			resetPocketable(listOfPlayers);
 			std::cout << "foul \n";
+			std::cout << "points(some points) for opponent \n";
+			resetPocketable(otherPlayer);
+			resetPocketable(currentPlayer);
+			int points = decidePoints(ballID);
+			givePoints(points, otherPlayer);
 			foulCommited = true;
 		}
 	}
 }
 
-void resetPocketable(std::list<Player*>& listOfPlayers){
-	for (std::list<Player*>::iterator player = listOfPlayers.begin(); player != listOfPlayers.end(); player++){
-		(*player)->pocketableBalls = 0;
-	}
+void resetPocketable(Player& player){
+	
+		player.pocketableBalls = 0;
+	
 	std::cout << "allowed pocketable balls have been reset \n";
 }
 
@@ -487,4 +493,14 @@ void changePocketable(Player& currentPlayer){
 		currentPlayer.pocketableBalls = 0;
 		std::cout << "allowed pocketable balls have changed to 0 \n";
 	}
+}
+
+void givePoints(int points, Player& player){
+	player.points += points;
+	std::cout << "player " << player.ID << " got " << points << " points \n";
+	std::cout << "player " << player.ID << " has  " << player.points << " points in total \n";
+}
+
+int decidePoints(int ballID){
+	return ballID - 14;//hack
 }
