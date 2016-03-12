@@ -29,6 +29,7 @@ GLFWwindow* window;
 bool ballsMoving = false;
 bool cueStickMoving = false;
 bool foulCommited = true;
+bool whitePocketed = true;
 double speedVec = 1.0;
 float force = 7.0f;
 
@@ -228,23 +229,49 @@ int main(void)
 		if (ballsMoving){
 			checkStop(listOfBalls);
 			ballsMoving = checkStable(listOfBalls); // sets ballsMoving to false if no ball moves
-			listOfBalls = checkWallCollisions(listOfBalls, foulCommited, otherPlayer, currentPlayer);
+			if (!ballsMoving && !whitePocketed){
+				checkCollisionCount(foulCommited, currentPlayer,otherPlayer);
+			}
+			if (!ballsMoving && !foulCommited){
+				Player dummy = currentPlayer;
+				currentPlayer = otherPlayer;
+				otherPlayer = dummy;
+				currentPlayerID = currentPlayer.ID;
+				std::cout << "No ball pocketed, player " << currentPlayer.ID << " turn \n";
+			}
+			listOfBalls = checkWallCollisions(listOfBalls, foulCommited, whitePocketed, otherPlayer, currentPlayer);
 			moveBalls(listOfBalls);
-			checkBallCollisions(listOfBalls); //add foulcommited and list of players, add collision count to player class
+			checkBallCollisions(listOfBalls,foulCommited,currentPlayer,otherPlayer);
 		}
-		if (foulCommited){
+		if (foulCommited && !ballsMoving){
 			currentPlayerID = selectOtherPlayer(currentPlayer);//hold current player until next turn
 			replacePocketedBalls(listOfBalls, listOfRePreacableBalls);
 			mouseRay = castRayThroughMouse();
-			relocateCueBall(mouseRay, cueBall);
-			checkClick(foulCommited);
-			if (foulCommited == false){
-				//switch players
+			if (whitePocketed){
+				relocateCueBall(mouseRay, cueBall);
+				checkClick(foulCommited);
+				if (foulCommited == false){
+
+					//switch players, move to method
 					Player dummy = currentPlayer;
 					currentPlayer = otherPlayer;
 					otherPlayer = dummy;
+
+					whitePocketed = false;
+					std::cout << "player " << currentPlayer.ID << " turn \n";
+				}
+			}
+			else{
+				foulCommited = false;
+
+				Player dummy = currentPlayer;
+				currentPlayer = otherPlayer;
+				otherPlayer = dummy;
+
+				std::cout << "player " << currentPlayer.ID << " turn \n";
 			}
 		}
+
 
 		////end of game loop//////
 		
@@ -269,19 +296,17 @@ int main(void)
 
 
 ///////////////////////////notes
+//comment game, engine
+//set same order for players in all methods
 // change orange to brown and swap
 // ref shader
-// 
+// fix two moving
 //gui - new shader needed for text
 //trace
 //
 
 
-//points
-//void addPoints(player, num)
-//void resetHittable(player)
-// void getPoints(ballID)
-
+//points for first hit or no hit
 
 //repleacable not repleacable when all red pocketed
 //

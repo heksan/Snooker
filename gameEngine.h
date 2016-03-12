@@ -24,13 +24,13 @@ void relocateMatrices(std::list<Ball*> listOfBalls);
 void relocateMatrices(std::list<Pocket*> listOfPockets);
 
 //ball to ball collisions
-void checkBallCollisions(std::list<Ball*> listOfBalls);
+void checkBallCollisions(std::list<Ball*> listOfBalls, bool& foulCommitted, Player& currentPlayer, Player& otherPlayer);
 void collideOneMoving(Ball* ballOne, Ball* ballTwo);
 void collideStationary(Ball* ballOne, Ball* ballTwo);
 void collideMoving(Ball *ballOne, Ball  *ballTwo);
 
 //ball to wall collisions
-std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls, bool& foulCommited, Player& otherPlayer, Player& currentPlayer);
+std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls, bool& foulCommited,bool& whitePocketed, Player& otherPlayer, Player& currentPlayer);
 void traceBackToWallContackPoint(std::list<Ball*>::iterator ball);
 void changeDirection(Ball* ball, char xORz);
 
@@ -50,9 +50,11 @@ int changePlayers(int currentPlayerID);
 int selectOtherPlayer(Player currentPlayer);
 
 //points, fouls and game rules
-void decidePointsAndFoulsPockets(int ballID, bool& foulCommited, Player& otherPlayer, Player& currentPlayer);
+void decidePointsAndFoulsPockets(int ballID, bool& foulCommited, bool& whitePocketed, Player& otherPlayer, Player& currentPlayer);
 void resetPocketable(Player& player);
 void changePocketable(Player& currentPlayer);
 void givePoints(int points, Player& player);
 int decidePoints(int ballID);
+void foulOnFirstCollision(int ballID, bool& foulCommitted, Player& currentPlayer, Player& otherPlayer);
+void checkCollisionCount(bool& foulCommited,Player& currentPlayer,Player& otherPlayer);
 #endif

@@ -15,6 +15,4 @@ Player::Player(int Id)
 	points = 0;
 	collisionCount = 0;
 	pocketableBalls = 0;
-	firstHitBallID = 0;
-
 }
