@@ -34,11 +34,12 @@ void initMovement(float speedVec, glm::vec2 mouseRay, Ball& ball){
 	ball.deceleration = glm::normalize(ball.movementVector)*decelerationRate;
 }
 
+//deprecated
 glm::mat4 moveBall(Ball& ball){
 	ball.matrix = glm::translate(ball.matrix, ball.movementVector);
 	ball.ballPosition = ball.ballPosition + ball.movementVector;
-	ball.movementVector.x = ball.movementVector.x*0.98f;
-	ball.movementVector.z = ball.movementVector.z*0.98f;
+	ball.movementVector.x = ball.movementVector.x * 0.98f;
+	ball.movementVector.z = ball.movementVector.z * 0.98f;
 	return ball.matrix;
 }
 
@@ -129,14 +130,14 @@ void checkBallCollisions(std::list<Ball*> listOfBalls, bool& foulCommitted, Play
 					}
 					//one moving
 					if (glm::length((*ballOne)->movementVector) > 0.0 && (glm::length((*ballTwo)->movementVector) == 0.0)){
-						collideOneMoving(*ballOne, *ballTwo);				
-						foulOnFirstCollision((*ballTwo)->id,foulCommitted,currentPlayer,otherPlayer); //first collision happens only here e.g. white hits something else
+						collideOneMoving(*ballOne, *ballTwo);
+						foulOnFirstCollision((*ballTwo)->id, foulCommitted, currentPlayer, otherPlayer); //first collision happens only here e.g. white hits something else
 					}
 					if (glm::length((*ballTwo)->movementVector) > 0.0 && (glm::length((*ballTwo)->movementVector) == 0.0)){
 						collideOneMoving(*ballTwo, *ballOne);
 					}
 				}
-				
+
 			}
 		}
 	}
@@ -245,7 +246,7 @@ std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls, bool& foulCom
 				changeDirection(*ball, 'z');
 			}
 			else{
-				decidePointsAndFoulsPockets((*ball)->id, foulCommited,whitePocketed, otherPlayer, currentPlayer);
+				decidePointsAndFoulsPockets((*ball)->id, foulCommited, whitePocketed, otherPlayer, currentPlayer);
 				listOfBalls = removeBall(listOfBalls, *ball);
 				return listOfBalls;
 			}
@@ -339,8 +340,16 @@ std::list <Ball*> removeBall(std::list <Ball*> listOfBalls, Ball* ball){
 
 //Takes list of Balls which should be on the table after pocketing(in most cases), checks listOfBalls for their presence
 //and if not found pushes them in
-void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list <Ball*> listOfRepleacableBalls){
+void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list<Ball*>& listOfRepleacableBalls){
+	bool noReds = true;
+	std::list<Ball*> ballsToBeRemoved;
+	for (std::list<Ball*>::iterator ifRed = listOfBalls.begin(); ifRed != listOfBalls.end(); ifRed++){
+		if ((*ifRed)->id >= 1 && (*ifRed)->id <= 15){
+			noReds = false;
+		}
+	}
 	for (std::list<Ball*>::iterator ballToBeInserted = listOfRepleacableBalls.begin(); ballToBeInserted != listOfRepleacableBalls.end(); ballToBeInserted++){
+		//search for missing coloured balls
 		bool found = false;
 		for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
 			if ((*currentBall)->id == (*ballToBeInserted)->id){
@@ -348,9 +357,24 @@ void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list <Ball*> listO
 			}
 		}
 		if (!found){
-			listOfBalls.push_front(*ballToBeInserted);
-			moveBallToStartingPosition(*ballToBeInserted);
+			if (!noReds){//replace
+				listOfBalls.push_front(*ballToBeInserted);
+				moveBallToStartingPosition(*ballToBeInserted);
+			}
+			else{//if no reds found and missing ball is first on list (hence has lowest points), delete ball instead
+				if ((*ballToBeInserted)->id == (*listOfRepleacableBalls.begin())->id){
+					ballsToBeRemoved.push_front(*listOfRepleacableBalls.begin());
+					std::cout << "popped ball with lowest points, id => " << (*listOfRepleacableBalls.begin())->id << " \n";
+				}
+				else{//replace
+					listOfBalls.push_front(*ballToBeInserted);
+					moveBallToStartingPosition(*ballToBeInserted);
+				}
+			}
 		}
+	}
+	if (ballsToBeRemoved.size() > 0){
+		listOfRepleacableBalls = removeBall(listOfRepleacableBalls, *ballsToBeRemoved.begin());//.begin cause only one ball is to be deleted at one time
 	}
 }
 
@@ -366,7 +390,7 @@ void moveBallToStartingPosition(Ball *ballToBeInserted){
 		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(0.0f, 0.0f, -130.0f));
 		ballToBeInserted->ballPosition = glm::vec3(0.0f, 0.0f, -130.0f);
 		ballToBeInserted->movementVector = glm::vec3(0.0);
-		
+
 	}
 	if (ballToBeInserted->id == 16){
 		ballToBeInserted->matrix = glm::translate(ballToBeInserted->matrix, -ballToBeInserted->ballPosition + glm::vec3(30.0f, 0.0f, -100.0f));
@@ -409,24 +433,13 @@ void moveBallToStartingPosition(Ball *ballToBeInserted){
 void relocateCueBall(glm::vec2 mouseRay, Ball& cueball){
 
 	if (mouseRay.y < -100.0f && mouseRay.y > -178.0f && mouseRay.x > -89.0f && mouseRay.x < 89.0f){
-
 		cueball.matrix = glm::translate(cueball.matrix, -cueball.ballPosition);
-
 		cueball.ballPosition.x = mouseRay.x;
 		cueball.ballPosition.z = mouseRay.y;
-
 		cueball.matrix = glm::translate(cueball.matrix, cueball.ballPosition);
 	}
 }
 
-int changePlayers(int currentPlayerID){
-	if (currentPlayerID == 1){
-		return 2;
-	}
-	else{
-		return 1;
-	}
-}
 
 int selectOtherPlayer(Player currentPlayer){
 	if (currentPlayer.ID == 1){
@@ -459,7 +472,7 @@ void decidePointsAndFoulsPockets(int ballID, bool& foulCommited, bool& whitePock
 	}
 	if (ballID >= 16){
 		if (currentPlayer.pocketableBalls == 1){
-			std::cout << "points(some points) for current player \n";//points to gryffindor do ball cases,
+			std::cout << "points(some points) for current player \n";
 			int points = decidePoints(ballID);
 			givePoints(points, currentPlayer);
 			changePocketable(currentPlayer);
@@ -509,7 +522,7 @@ void foulOnFirstCollision(int ballID, bool& foulCommitted, Player& currentPlayer
 			resetPocketable(currentPlayer);
 			std::cout << "first hit ball in wrong colour, foul \n";
 		}
-		if (ballID >= 1 && ballID <= 15 && currentPlayer.pocketableBalls==1){
+		if (ballID >= 1 && ballID <= 15 && currentPlayer.pocketableBalls == 1){
 			foulCommitted = true;
 			givePoints(4, otherPlayer);
 			resetPocketable(currentPlayer);
@@ -519,7 +532,7 @@ void foulOnFirstCollision(int ballID, bool& foulCommitted, Player& currentPlayer
 	currentPlayer.collisionCount += 1;
 }
 
-void checkCollisionCount(bool& foulCommited, Player& currentPlayer,Player& otherPlayer){
+void checkCollisionCount(bool& foulCommited, Player& currentPlayer, Player& otherPlayer){
 	if (currentPlayer.collisionCount == 0){
 		foulCommited = true;
 		std::cout << "no ball hit, foul \n";

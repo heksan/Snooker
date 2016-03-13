@@ -41,12 +41,11 @@ void moveStickToOrigin(CueStick& cueStick);
 
 // methods used after pocketing a ball
 std::list <Ball*> removeBall(std::list <Ball*> listOfBalls, Ball* ball);
-void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list <Ball*> listOfRepleacableBalls);
+void replacePocketedBalls(std::list<Ball*>& listOfBalls, std::list<Ball*>& listOfRepleacableBalls);
 void moveBallToStartingPosition(Ball *ballToBeInserted);
 void relocateCueBall(glm::vec2 mouseRay, Ball& cueball);
 
 //players
-int changePlayers(int currentPlayerID);
 int selectOtherPlayer(Player currentPlayer);
 
 //points, fouls and game rules

@@ -57,7 +57,9 @@ int main(void)
 	std::list<Ball*> listOfBalls;
 	std::list<Ball*> listOfRePreacableBalls; //here goes white and all colours besides red
 	Ball cueBall(0, glm::vec3(0, 0, -130));
-	
+
+	/////////////////uncomment this and push_backs, delete test lines for all balls in right positions
+	/*
 	Ball redBall1(1, glm::vec3(0, 0, 96));
 	Ball redBall2(2, glm::vec3(4, 0, 102));
 	Ball redBall3(3, glm::vec3(-4, 0, 102));
@@ -72,9 +74,9 @@ int main(void)
 	Ball redBall12(12, glm::vec3(6, 0, 120));
 	Ball redBall13(13, glm::vec3(12, 0, 120));
 	Ball redBall14(14, glm::vec3(-6, 0, 120));
-	Ball redBall15(15, glm::vec3(-12, 0, 120));
-
-
+	Ball redBall15(15, glm::vec3(-12, 0, 120));*/
+	////////test line//////////////////
+	Ball redBallX(1, glm::vec3(-80, 0, -170));
 	/////////////////colour balls
 	//16 yellow
 	//17 orange
@@ -82,7 +84,11 @@ int main(void)
 	//19blue
 	//20 pink
 	//21black
-	Ball yellowBall(16, glm::vec3(30, 0, -100));
+	
+	
+	//////////////////testline, uncomment line below to get right pos
+	Ball yellowBall(16, glm::vec3(80, 0, -170));
+	//Ball yellowBall(16, glm::vec3(30, 0, -100));
 	Ball orangeBall(17, glm::vec3(0, 0, -100));
 	Ball greenBall(18, glm::vec3(-30, 0, -100));
 	Ball blueBall(19, glm::vec3(0, 0, 0));
@@ -90,6 +96,8 @@ int main(void)
 	Ball blackBall(21, glm::vec3(0, 0, 150));
 
 	listOfBalls.push_back(&cueBall);
+
+	/*
 	listOfBalls.push_back(&redBall1);
 	listOfBalls.push_back(&redBall2);
 	listOfBalls.push_back(&redBall3);
@@ -104,7 +112,13 @@ int main(void)
 	listOfBalls.push_back(&redBall12);
 	listOfBalls.push_back(&redBall13);
 	listOfBalls.push_back(&redBall14);
-	listOfBalls.push_back(&redBall15);
+	listOfBalls.push_back(&redBall15);*/
+
+
+	////////test line//////////////////
+	listOfBalls.push_back(&redBallX);
+	//////////////////////////////
+	
 	listOfBalls.push_back(&yellowBall);
 	listOfBalls.push_back(&orangeBall);
 	listOfBalls.push_back(&greenBall);
@@ -112,13 +126,13 @@ int main(void)
 	listOfBalls.push_back(&pinkBall);
 	listOfBalls.push_back(&blackBall);
 
-	listOfRePreacableBalls.push_back(&cueBall);
 	listOfRePreacableBalls.push_back(&yellowBall);
 	listOfRePreacableBalls.push_back(&orangeBall);
 	listOfRePreacableBalls.push_back(&greenBall);
 	listOfRePreacableBalls.push_back(&blueBall);
 	listOfRePreacableBalls.push_back(&pinkBall);
 	listOfRePreacableBalls.push_back(&blackBall);
+	listOfRePreacableBalls.push_back(&cueBall);
 
 	//pockets
 	std::list<Pocket*> listOfPockets;
@@ -233,10 +247,12 @@ int main(void)
 				checkCollisionCount(foulCommited, currentPlayer,otherPlayer);
 			}
 			if (!ballsMoving && !foulCommited){
+
 				Player dummy = currentPlayer;
 				currentPlayer = otherPlayer;
 				otherPlayer = dummy;
 				currentPlayerID = currentPlayer.ID;
+
 				std::cout << "No ball pocketed, player " << currentPlayer.ID << " turn \n";
 			}
 			listOfBalls = checkWallCollisions(listOfBalls, foulCommited, whitePocketed, otherPlayer, currentPlayer);
