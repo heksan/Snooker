@@ -30,6 +30,7 @@ bool ballsMoving = false;
 bool cueStickMoving = false;
 bool foulCommited = true;
 bool whitePocketed = true;
+bool appropriateBallPocketed = false;
 double speedVec = 1.0;
 float force = 7.0f;
 
@@ -55,7 +56,7 @@ int main(void)
 
 	//init balls and its list
 	std::list<Ball*> listOfBalls;
-	std::list<Ball*> listOfRePreacableBalls; //here goes white and all colours besides red
+	std::list<Ball*> listOfRepleacableBalls; //here goes white and all colours besides red
 	Ball cueBall(0, glm::vec3(0, 0, -130));
 
 	/////////////////uncomment this and push_backs, delete test lines for all balls in right positions
@@ -126,13 +127,13 @@ int main(void)
 	listOfBalls.push_back(&pinkBall);
 	listOfBalls.push_back(&blackBall);
 
-	listOfRePreacableBalls.push_back(&yellowBall);
-	listOfRePreacableBalls.push_back(&orangeBall);
-	listOfRePreacableBalls.push_back(&greenBall);
-	listOfRePreacableBalls.push_back(&blueBall);
-	listOfRePreacableBalls.push_back(&pinkBall);
-	listOfRePreacableBalls.push_back(&blackBall);
-	listOfRePreacableBalls.push_back(&cueBall);
+	listOfRepleacableBalls.push_back(&yellowBall);
+	listOfRepleacableBalls.push_back(&orangeBall);
+	listOfRepleacableBalls.push_back(&greenBall);
+	listOfRepleacableBalls.push_back(&blueBall);
+	listOfRepleacableBalls.push_back(&pinkBall);
+	listOfRepleacableBalls.push_back(&blackBall);
+	listOfRepleacableBalls.push_back(&cueBall);
 
 	//pockets
 	std::list<Pocket*> listOfPockets;
@@ -229,12 +230,13 @@ int main(void)
 		//Main game loop//
 
 		if (!ballsMoving && !cueStickMoving && !foulCommited){//stable
+			appropriateBallPocketed = false;
 			mouseRay = castRayThroughMouse();
 			relocateCueStick(mouseRay, cueStick, cueBall);
 			checkStart(cueStickMoving,force);
 			initMovement(force, mouseRay, cueBall);//gives cueBall initial vectors 
 			drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
-			replacePocketedBalls(listOfBalls,listOfRePreacableBalls);
+			replacePocketedBalls(listOfBalls,listOfRepleacableBalls);
 		}
 		if (cueStickMoving){
 			drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
@@ -246,22 +248,25 @@ int main(void)
 			if (!ballsMoving && !whitePocketed){
 				checkCollisionCount(foulCommited, currentPlayer,otherPlayer);
 			}
-			if (!ballsMoving && !foulCommited){
+			if (!ballsMoving && !foulCommited && !appropriateBallPocketed){
 
 				Player dummy = currentPlayer;
 				currentPlayer = otherPlayer;
 				otherPlayer = dummy;
 				currentPlayerID = currentPlayer.ID;
-
+				if (checkReds(listOfBalls)){
+					changePocketable(currentPlayer);
+				}
 				std::cout << "No ball pocketed, player " << currentPlayer.ID << " turn \n";
 			}
-			listOfBalls = checkWallCollisions(listOfBalls, foulCommited, whitePocketed, otherPlayer, currentPlayer);
+			listOfBalls = checkWallCollisions(listOfBalls, foulCommited, whitePocketed, otherPlayer, currentPlayer,appropriateBallPocketed);
 			moveBalls(listOfBalls);
 			checkBallCollisions(listOfBalls,foulCommited,currentPlayer,otherPlayer);
 		}
 		if (foulCommited && !ballsMoving){
+			appropriateBallPocketed = false;
 			currentPlayerID = selectOtherPlayer(currentPlayer);//hold current player until next turn
-			replacePocketedBalls(listOfBalls, listOfRePreacableBalls);
+			replacePocketedBalls(listOfBalls, listOfRepleacableBalls);
 			mouseRay = castRayThroughMouse();
 			if (whitePocketed){
 				relocateCueBall(mouseRay, cueBall);
@@ -312,7 +317,6 @@ int main(void)
 
 
 ///////////////////////////notes
-//comment game, engine
 //set same order for players in all methods
 // change orange to brown and swap
 // ref shader
@@ -324,7 +328,6 @@ int main(void)
 
 //points for first hit or no hit
 
-//repleacable not repleacable when all red pocketed
 //
 // table can be static?
 ///

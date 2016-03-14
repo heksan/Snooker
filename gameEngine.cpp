@@ -131,7 +131,7 @@ void checkBallCollisions(std::list<Ball*> listOfBalls, bool& foulCommitted, Play
 					//one moving
 					if (glm::length((*ballOne)->movementVector) > 0.0 && (glm::length((*ballTwo)->movementVector) == 0.0)){
 						collideOneMoving(*ballOne, *ballTwo);
-						foulOnFirstCollision((*ballTwo)->id, foulCommitted, currentPlayer, otherPlayer); //first collision happens only here e.g. white hits something else
+						foulOnFirstCollision((*ballTwo)->id, foulCommitted, currentPlayer, otherPlayer,listOfBalls); //first collision happens only here e.g. white hits something else
 					}
 					if (glm::length((*ballTwo)->movementVector) > 0.0 && (glm::length((*ballTwo)->movementVector) == 0.0)){
 						collideOneMoving(*ballTwo, *ballOne);
@@ -225,7 +225,7 @@ void collideMoving(Ball *ballOne, Ball *ballTwo){
 }
 
 //When ball moves slightly outside of table area it is moved back to closes "in-table" position and has its movement vector changed
-std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls, bool& foulCommited, bool& whitePocketed, Player& otherPlayer, Player& currentPlayer){
+std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls, bool& foulCommited, bool& whitePocketed, Player& otherPlayer, Player& currentPlayer, bool& appropriateBallPocketed){
 	for (std::list<Ball*>::iterator ball = listOfBalls.begin(); ball != listOfBalls.end(); ball++){
 		if ((abs((*ball)->ballPosition.x) >= tableWidth - ballRadius)){
 			//determine wheter there is a wall (if not, there is a pocket
@@ -234,7 +234,7 @@ std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls, bool& foulCom
 				changeDirection(*ball, 'x');
 			}
 			else{
-				decidePointsAndFoulsPockets((*ball)->id, foulCommited, whitePocketed, otherPlayer, currentPlayer);
+				decidePointsAndFoulsPockets((*ball)->id, foulCommited, whitePocketed, otherPlayer, currentPlayer, appropriateBallPocketed,listOfBalls);
 				listOfBalls = removeBall(listOfBalls, *ball);
 				return listOfBalls;
 			}
@@ -246,7 +246,7 @@ std::list<Ball*> checkWallCollisions(std::list<Ball*> listOfBalls, bool& foulCom
 				changeDirection(*ball, 'z');
 			}
 			else{
-				decidePointsAndFoulsPockets((*ball)->id, foulCommited, whitePocketed, otherPlayer, currentPlayer);
+				decidePointsAndFoulsPockets((*ball)->id, foulCommited, whitePocketed, otherPlayer, currentPlayer, appropriateBallPocketed,listOfBalls);
 				listOfBalls = removeBall(listOfBalls, *ball);
 				return listOfBalls;
 			}
@@ -450,7 +450,7 @@ int selectOtherPlayer(Player currentPlayer){
 	}
 }
 
-void decidePointsAndFoulsPockets(int ballID, bool& foulCommited, bool& whitePocketed, Player& otherPlayer, Player& currentPlayer){
+void decidePointsAndFoulsPockets(int ballID, bool& foulCommited, bool& whitePocketed, Player& otherPlayer, Player& currentPlayer, bool& appropriateBallPocketed,std::list<Ball*> listOfBalls){
 	if (ballID == 0){
 		foulCommited = true;
 		std::cout << "foul \n";
@@ -462,6 +462,7 @@ void decidePointsAndFoulsPockets(int ballID, bool& foulCommited, bool& whitePock
 		if (currentPlayer.pocketableBalls == 0){
 			givePoints(1, currentPlayer);
 			changePocketable(currentPlayer);
+			appropriateBallPocketed = true;
 		}
 		else{
 			std::cout << "foul \n";
@@ -471,19 +472,33 @@ void decidePointsAndFoulsPockets(int ballID, bool& foulCommited, bool& whitePock
 		}
 	}
 	if (ballID >= 16){
-		if (currentPlayer.pocketableBalls == 1){
-			std::cout << "points(some points) for current player \n";
-			int points = decidePoints(ballID);
-			givePoints(points, currentPlayer);
-			changePocketable(currentPlayer);
+		if (checkReds(listOfBalls)){
+			if (currentPlayer.pocketableBalls == 1){
+				std::cout << "points(some points) for current player \n";
+				int points = decidePoints(ballID);
+				appropriateBallPocketed = true;
+				givePoints(points, currentPlayer);
+				changePocketable(currentPlayer);
+			}
+			else{
+				std::cout << "foul \n";
+				std::cout << "points(some points) for opponent \n";
+				resetPocketable(currentPlayer);
+				int points = decidePointsFoul(ballID);
+				givePoints(points, otherPlayer);
+				foulCommited = true;
+			}
 		}
 		else{
-			std::cout << "foul \n";
-			std::cout << "points(some points) for opponent \n";
-			resetPocketable(currentPlayer);
-			int points = decidePoints(ballID);
-			givePoints(points, otherPlayer);
-			foulCommited = true;
+			if (ballID == findBallwithSmallestID(listOfBalls)){
+				int points = decidePoints(ballID);
+				givePoints(points, currentPlayer);
+			}
+			else{
+				int points = decidePointsFoul(ballID);
+				givePoints(points, otherPlayer);
+				foulCommited = true;
+			}
 		}
 	}
 }
@@ -510,23 +525,41 @@ void givePoints(int points, Player& player){
 	std::cout << "player " << player.ID << " has  " << player.points << " points in total \n";
 }
 
-int decidePoints(int ballID){
-	return ballID - 14;//hack
+int decidePointsFoul(int ballID){
+	if (ballID - 14 < 4){
+		return 4;
+	}
+	else{
+		return ballID - 14;//hack
+	}
 }
 
-void foulOnFirstCollision(int ballID, bool& foulCommitted, Player& currentPlayer, Player& otherPlayer){
+int decidePoints(int ballID){
+		return ballID - 14;//hack
+}
+
+void foulOnFirstCollision(int ballID, bool& foulCommitted, Player& currentPlayer, Player& otherPlayer, std::list<Ball*> listOfBalls){
 	if (currentPlayer.collisionCount == 0){
-		if (ballID > 15 && currentPlayer.pocketableBalls == 0){
-			foulCommitted = true;
-			givePoints(4, otherPlayer);
-			resetPocketable(currentPlayer);
-			std::cout << "first hit ball in wrong colour, foul \n";
+		if (checkReds(listOfBalls)){
+			if (ballID > 15 && currentPlayer.pocketableBalls == 0){
+				foulCommitted = true;
+				givePoints(decidePointsFoul(ballID), otherPlayer);
+				resetPocketable(currentPlayer);
+				std::cout << "foul, first hit ball in wrong colour, foul \n";
+			}
+			if (ballID >= 1 && ballID <= 15 && currentPlayer.pocketableBalls == 1){
+				foulCommitted = true;
+				givePoints(4, otherPlayer);
+				resetPocketable(currentPlayer);
+				std::cout << "foul, first hit ball in wrong colour, foul \n";
+			}
 		}
-		if (ballID >= 1 && ballID <= 15 && currentPlayer.pocketableBalls == 1){
-			foulCommitted = true;
-			givePoints(4, otherPlayer);
-			resetPocketable(currentPlayer);
-			std::cout << "first hit ball in wrong colour, foul \n";
+		else{
+			if (ballID != findBallwithSmallestID(listOfBalls)){
+				foulCommitted = true;
+				givePoints(decidePointsFoul(ballID), otherPlayer);
+				std::cout << "foul,should have hit ball with id - "<<findBallwithSmallestID(listOfBalls) <<" \n";
+			}
 		}
 	}
 	currentPlayer.collisionCount += 1;
@@ -539,4 +572,24 @@ void checkCollisionCount(bool& foulCommited, Player& currentPlayer, Player& othe
 		givePoints(4, otherPlayer);
 	}
 	currentPlayer.collisionCount = 0;
+}
+
+bool checkReds(std::list<Ball*> listOfBalls){
+	bool ifReds=false;
+	for (std::list<Ball*>::iterator ball = listOfBalls.begin(); ball != listOfBalls.end(); ball++){
+		if ((*ball)->id >= 1 && (*ball)->id <= 15){
+			ifReds = true;
+		}
+	}
+	return ifReds;
+}
+
+int findBallwithSmallestID(std::list<Ball*> listOfBalls){
+	int smallestID = 1000;
+	for (std::list<Ball*>::iterator ball = listOfBalls.begin(); ball != listOfBalls.end(); ball++){
+		if ((*ball)->id != 0 && (*ball)->id < smallestID){
+			smallestID = (*ball)->id;
+		}
+	}
+	return smallestID;
 }
