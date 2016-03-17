@@ -476,7 +476,7 @@ void decidePointsAndFoulsPockets(int ballID, bool& foulCommited, bool& whitePock
 			if (currentPlayer.pocketableBalls == 1){
 				std::cout << "points(some points) for current player \n";
 				int points = decidePoints(ballID);
-				appropriateBallPocketed = true;
+				
 				givePoints(points, currentPlayer);
 				changePocketable(currentPlayer);
 			}
@@ -493,6 +493,7 @@ void decidePointsAndFoulsPockets(int ballID, bool& foulCommited, bool& whitePock
 			if (ballID == findBallwithSmallestID(listOfBalls)){
 				int points = decidePoints(ballID);
 				givePoints(points, currentPlayer);
+				appropriateBallPocketed = true;
 			}
 			else{
 				int points = decidePointsFoul(ballID);

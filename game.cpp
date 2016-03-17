@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <list>
+#include <vector>
 // Include GLEW
 #include <GL/glew.h>
 // Include GLFW
@@ -23,8 +24,10 @@ using namespace glm;
 #include "pocket.h"
 #include "gui.h"
 #include "player.h"
+#include "aimHelper.h"
 
 
+std::vector<glm::vec3> helper;
 GLFWwindow* window;
 bool ballsMoving = false;
 bool cueStickMoving = false;
@@ -214,7 +217,7 @@ int main(void)
 	//test gui
 	initPowerBar2D();
 	initPlayerIndicator2D();
-
+	initAimHelper(programID);
 
 
 	do{
@@ -223,6 +226,7 @@ int main(void)
 		printPowerBar2D(force);
 		printPlayerIndicator2D(currentPlayerID);
 		glUseProgram(programID);
+		
 		computeCameraMatricesFromInputs();
 		ProjectionMatrix = getProjectionMatrix();//refactor this and next line
 		ViewMatrix = getViewMatrix();
@@ -236,6 +240,8 @@ int main(void)
 			checkStart(cueStickMoving,force);
 			initMovement(force, mouseRay, cueBall);//gives cueBall initial vectors 
 			drawCueStick(cueStick, MatrixID, ViewMatrix, ProjectionMatrix);
+			helper = calcAimHelper(mouseRay, cueBall, listOfBalls);
+			drawAimHelper(helper, cueBall.ballPosition,MatrixID ,ViewMatrix, ProjectionMatrix);
 			replacePocketedBalls(listOfBalls,listOfRepleacableBalls);
 		}
 		if (cueStickMoving){
@@ -255,7 +261,7 @@ int main(void)
 				otherPlayer = dummy;
 				currentPlayerID = currentPlayer.ID;
 				if (checkReds(listOfBalls)){
-					changePocketable(currentPlayer);
+					resetPocketable(currentPlayer);
 				}
 				std::cout << "No ball pocketed, player " << currentPlayer.ID << " turn \n";
 			}
