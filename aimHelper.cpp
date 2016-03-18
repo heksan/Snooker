@@ -31,7 +31,7 @@ GLuint uniformAimHelper;
 glm::mat4 MVP;
 glm::mat4 matrix;
 const float ballRadius = 2.6f;
-const float pocketRadius = 7.5f;
+const float pocketRadius = 3.5f;
 const float tableWidth = 89.0f;
 const float tableLength = 178.5f;
 
@@ -96,19 +96,19 @@ std::vector<glm::vec3> calcAimHelper(glm::vec2 mouseRay, Ball cueBall, std::list
 	cue.ballPosition = cue.ballPosition + cue.movementVector;
 	cue.movementVector = cueMovement;
 
-	for (int i = 0; i < 600; i++){
+	for (int i = 0; i < 400; i++){
 		cue.ballPosition = cue.ballPosition + cue.movementVector;
 		secondBallMoving = checkCueCollision(cue, listOfBalls);
 		shoterWallCollision(cue);
-		if (i % 6 == 0){
+		if (i % 10 == 0){
 			helperPoints.push_back(cue.ballPosition);
 		}
 	}
 	if (secondBallMoving){
-		for (int i = 0; i < 300; i++){
+		for (int i = 0; i < 200; i++){
 			cpyOfBall.ballPosition = cpyOfBall.ballPosition + cpyOfBall.movementVector;
 			shoterWallCollision(cpyOfBall);
-			if (i % 6 == 0){
+			if (i % 10 == 0){
 				helperPoints.push_back(cpyOfBall.ballPosition);
 			}
 		}

@@ -103,6 +103,8 @@
     <Text Include="TransformVertexShader.vertexshader" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="TextureFragmentShader.fragmentshader" />
+    <None Include="TextureVertexShader.vertexshader" />
     <None Include="TextVertexShader.vertexshader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

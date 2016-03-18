@@ -19,7 +19,7 @@ using namespace glm;
 #include "ball.h" 
 
 const float ballRadius = 2.6f;
-const float pocketRadius = 7.5f;
+const float pocketRadius = 3.5f;
 const float tableWidth = 89.0f;
 const float tableLength = 178.5f;
 const float precisionSteps = 200.0f;

@@ -1,6 +1,6 @@
 #ifndef POCKET_H
 #define POCKET_H
-
+#include <vector>
 
 
 
@@ -10,8 +10,9 @@ class Pocket
 {
 
 public:
-	GLfloat vertex_buffer_data[18];
-	GLfloat color_buffer_data[18];
+	float radius = 3.5f;
+	std::vector<glm::vec3> vertexBufferData;
+	std::vector<glm::vec3> colorBufferData;
 	GLuint vertexbuffer;
 	GLuint colorbuffer;
 	glm::mat4 matrix;

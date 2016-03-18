@@ -25,9 +25,12 @@ void createBuffer(Table& table){
 	glBindBuffer(GL_ARRAY_BUFFER, table.vertexbufferTable);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(table.vertex_buffer_data_table), table.vertex_buffer_data_table, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &table.colorbufferTable);
-	glBindBuffer(GL_ARRAY_BUFFER, table.colorbufferTable);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(table.color_buffer_data_table), table.color_buffer_data_table, GL_STATIC_DRAW);
+	//glGenBuffers(1, &table.colorbufferTable);
+	//glBindBuffer(GL_ARRAY_BUFFER, table.colorbufferTable);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(table.color_buffer_data_table), table.color_buffer_data_table, GL_STATIC_DRAW);
+	glGenBuffers(1, &table.uvbufferTable);
+	glBindBuffer(GL_ARRAY_BUFFER, table.uvbufferTable);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(table.uv_buffer_data_table), table.uv_buffer_data_table, GL_STATIC_DRAW);
 }
 
 void createBuffer(CueStick& cueStick){
@@ -73,14 +76,14 @@ void createBuffers(std::list<Ball*> listOfBalls){
 void createBuffers(std::list<Pocket*> listOfPockets){
 	for (std::list<Pocket*>::iterator currentPocket = listOfPockets.begin(); currentPocket != listOfPockets.end(); currentPocket++){
 
+
 		glGenBuffers(1, &(*currentPocket)->vertexbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, (*currentPocket)->vertexbuffer);
-		glBufferData(GL_ARRAY_BUFFER, sizeof((*currentPocket)->vertex_buffer_data), (*currentPocket)->vertex_buffer_data, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, (*currentPocket)->vertexBufferData.size()*sizeof(glm::vec3), &(*currentPocket)->vertexBufferData[0], GL_STATIC_DRAW);
 
 		glGenBuffers(1, &(*currentPocket)->colorbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, (*currentPocket)->colorbuffer);
-		glBufferData(GL_ARRAY_BUFFER, sizeof((*currentPocket)->color_buffer_data), (*currentPocket)->color_buffer_data, GL_STATIC_DRAW);
-
+		glBufferData(GL_ARRAY_BUFFER, (*currentPocket)->colorBufferData.size()*sizeof(glm::vec3), &(*currentPocket)->colorBufferData[0], GL_STATIC_DRAW);
 
 	}
 }
@@ -153,7 +156,7 @@ void drawPockets(std::list<Pocket*> listOfPockets, GLuint MatrixID, glm::mat4 Vi
 		glBindBuffer(GL_ARRAY_BUFFER, (*currentPocket)->colorbuffer);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3*2);
+		glDrawArrays(GL_TRIANGLES, 0, 3*13);
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
@@ -161,18 +164,24 @@ void drawPockets(std::list<Pocket*> listOfPockets, GLuint MatrixID, glm::mat4 Vi
 }
 
 
-void drawTable(Table table, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix){
+void drawTable(Table table, GLuint MatrixID, GLuint TextureID, glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, GLuint tableTexture){
 
 
 	table.MVP = ProjectionMatrix * ViewMatrix * table.matrix;
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &table.MVP[0][0]);
+
+	glActiveTexture(GL_TEXTURE0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glBindTexture(GL_TEXTURE_2D,tableTexture);
+	glUniform1i(TextureID, 0);
+
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, table.vertexbufferTable);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, table.colorbufferTable);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, table.uvbufferTable);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3 * 2);
 

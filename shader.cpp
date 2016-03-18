@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_DEPRECATE
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -107,4 +108,60 @@ GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_pat
 	return ProgramID;
 }
 
+GLuint loadBMP(const char* imagePath){
+	int width = 512;
+	int height=512;
+	unsigned char * data;
+	unsigned char * header;
+
+	FILE * file = fopen(imagePath, "rb");
+	if (!file){ 
+		printf("Image could not be opened\n"); return 0; 
+	}
+	else{
+		cout<<"opened texture file"<< imagePath<< "\n";
+	}
+	data = new unsigned char[width*height*3];
+	header = new unsigned char[54];
+
+	fread(header, 1, 54, file);
+
+	unsigned int dataPos = *(int*)&(header[0x0A]);
+	unsigned int imageSize = *(int*)&(header[0x22]);
+	 width = *(int*)&(header[0x12]);
+	 height = *(int*)&(header[0x16]);
+	
+
+
+	fread(data, 1, width*height * 3, file);
+
+	fclose(file);
+
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
+	
+
+	delete[] header;
+	delete[] data;
+
+	// Poor filtering, or ...
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
+	//float color[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+	//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
+
+	// ... nice trilinear filtering.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	// Return the ID of the texture we just created
+	return textureID;
+
+}
 

@@ -91,8 +91,8 @@ int main(void)
 	
 	
 	//////////////////testline, uncomment line below to get right pos
-	Ball yellowBall(16, glm::vec3(80, 0, -170));
-	//Ball yellowBall(16, glm::vec3(30, 0, -100));
+	//Ball yellowBall(16, glm::vec3(80, 0, -170));
+	Ball yellowBall(16, glm::vec3(30, 0, -100));
 	Ball orangeBall(17, glm::vec3(0, 0, -100));
 	Ball greenBall(18, glm::vec3(-30, 0, -100));
 	Ball blueBall(19, glm::vec3(0, 0, 0));
@@ -153,6 +153,8 @@ int main(void)
 	listOfPockets.push_back(&pocket4);
 	listOfPockets.push_back(&pocket5);
 	listOfPockets.push_back(&pocket6);
+
+	
 	
 	// Initialise GLFW
 	if (!glfwInit())
@@ -186,6 +188,9 @@ int main(void)
 		return -1;
 	}
 
+	GLuint tableTexture = loadBMP(".\\texture.bmp"); // this has to be AFTER glew init
+
+
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_FALSE);
 
@@ -202,10 +207,13 @@ int main(void)
 	glBindVertexArray(VertexArrayID);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("TransformVertexShader.vertexshader", "ColorFragmentShader.fragmentshader");
+	GLuint colorShader = LoadShaders("TransformVertexShader.vertexshader", "ColorFragmentShader.fragmentshader");
+	GLuint textureShader = LoadShaders("TextureVertexShader.vertexshader", "TextureFragmentShader.fragmentshader");
 
 	// Get a handle for our "MVP" uniform
-	GLuint MatrixID = glGetUniformLocation(programID, "MVP"); //apparently only this is used
+	GLuint MatrixID = glGetUniformLocation(colorShader, "MVP"); //apparently only this is used
+	GLuint TextureMatrixID = glGetUniformLocation(textureShader, "MVP");
+	GLuint SamplerID = glGetUniformLocation(textureShader, "myTextureSampler");
 
 	createBuffer(table);
 	createBuffer(cueStick);
@@ -217,15 +225,15 @@ int main(void)
 	//test gui
 	initPowerBar2D();
 	initPlayerIndicator2D();
-	initAimHelper(programID);
+	initAimHelper(colorShader);
 
 
 	do{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glUseProgram(programID);
+		//glUseProgram(colorShader);
 		printPowerBar2D(force);
 		printPlayerIndicator2D(currentPlayerID);
-		glUseProgram(programID);
+		glUseProgram(colorShader);
 		
 		computeCameraMatricesFromInputs();
 		ProjectionMatrix = getProjectionMatrix();//refactor this and next line
@@ -303,7 +311,9 @@ int main(void)
 		////end of game loop//////
 		
 		drawBalls(listOfBalls, MatrixID, ViewMatrix, ProjectionMatrix);
-		drawTable(table, MatrixID, ViewMatrix, ProjectionMatrix);
+		glUseProgram(textureShader);
+		drawTable(table, TextureMatrixID, SamplerID, ViewMatrix, ProjectionMatrix,tableTexture);
+		glUseProgram(colorShader);
 		drawPockets(listOfPockets, MatrixID, ViewMatrix, ProjectionMatrix);
 
 		glfwSwapBuffers(window);
@@ -314,7 +324,7 @@ int main(void)
 	} while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
 
 	cleanupBuffers(listOfBalls);
-	glDeleteProgram(programID);
+	glDeleteProgram(colorShader);
 	glDeleteVertexArrays(1, &VertexArrayID);
 	glfwTerminate();
 	return 0;
@@ -323,9 +333,10 @@ int main(void)
 
 
 ///////////////////////////notes
+//raf shaders
 //set same order for players in all methods
 // change orange to brown and swap
-// ref shader
+// ref shaderloader
 // fix two moving
 //gui - new shader needed for text
 //trace
