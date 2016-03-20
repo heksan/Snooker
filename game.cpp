@@ -315,6 +315,7 @@ int main(void)
 		glUseProgram(textureShader);
 		drawTable(table, TextureMatrixID, SamplerID, ViewMatrix, ProjectionMatrix,tableTexture);
 		glUseProgram(colorShader);
+		drawFrame(table, MatrixID, ViewMatrix, ProjectionMatrix);
 		drawPockets(listOfPockets, MatrixID, ViewMatrix, ProjectionMatrix);
 
 		glfwSwapBuffers(window);

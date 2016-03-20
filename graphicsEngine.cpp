@@ -25,12 +25,18 @@ void createBuffer(Table& table){
 	glBindBuffer(GL_ARRAY_BUFFER, table.vertexbufferTable);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(table.vertex_buffer_data_table), table.vertex_buffer_data_table, GL_STATIC_DRAW);
 
-	//glGenBuffers(1, &table.colorbufferTable);
-	//glBindBuffer(GL_ARRAY_BUFFER, table.colorbufferTable);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(table.color_buffer_data_table), table.color_buffer_data_table, GL_STATIC_DRAW);
 	glGenBuffers(1, &table.uvbufferTable);
 	glBindBuffer(GL_ARRAY_BUFFER, table.uvbufferTable);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(table.uv_buffer_data_table), table.uv_buffer_data_table, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &table.vertexbufferFrame);
+	glBindBuffer(GL_ARRAY_BUFFER, table.vertexbufferFrame);
+	glBufferData(GL_ARRAY_BUFFER, table.vertexBufferDataFrame.size()*sizeof(glm::vec3), &table.vertexBufferDataFrame[0], GL_STATIC_DRAW);
+
+	glGenBuffers(1, &table.colorbufferFrame);
+	glBindBuffer(GL_ARRAY_BUFFER, table.colorbufferFrame);
+	glBufferData(GL_ARRAY_BUFFER, table.colorBufferDataFrame.size()*sizeof(glm::vec3), &table.colorBufferDataFrame[0], GL_STATIC_DRAW);
+
 }
 
 void createBuffer(CueStick& cueStick){
@@ -184,6 +190,26 @@ void drawTable(Table table, GLuint MatrixID, GLuint TextureID, glm::mat4 ViewMat
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3 * 2);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+
+
+}
+
+void drawFrame(Table table, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix){
+
+	table.MVP = ProjectionMatrix * ViewMatrix * table.matrix;
+	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &table.MVP[0][0]);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, table.vertexbufferFrame);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, table.colorbufferFrame);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	glDrawArrays(GL_TRIANGLES, 0, table.vertexBufferDataFrame.size());
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
