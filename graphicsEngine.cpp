@@ -156,7 +156,7 @@ void drawPockets(std::list<Pocket*> listOfPockets, GLuint MatrixID, glm::mat4 Vi
 		glBindBuffer(GL_ARRAY_BUFFER, (*currentPocket)->colorbuffer);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3*13);
+		glDrawArrays(GL_TRIANGLES, 0, (*currentPocket)->vertexBufferData.size());
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);

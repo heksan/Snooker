@@ -22,6 +22,7 @@ bool checkStable(Ball ball);
 void relocateMatrix(Ball& ball);
 void relocateMatrices(std::list<Ball*> listOfBalls);
 void relocateMatrices(std::list<Pocket*> listOfPockets);
+void rotateMatrices(std::list<Pocket*> listOfPockets);
 
 //ball to ball collisions
 void checkBallCollisions(std::list<Ball*> listOfBalls, bool& foulCommitted, Player& currentPlayer, Player& otherPlayer);

@@ -140,12 +140,12 @@ int main(void)
 
 	//pockets
 	std::list<Pocket*> listOfPockets;
-	Pocket pocket1(glm::vec3(89.0f, 0.1f, 178.5f));
-	Pocket pocket2(glm::vec3(-89.0f, 0.1f, 178.5f));
-	Pocket pocket3(glm::vec3(89.0f, 0.1f, -178.5f));
-	Pocket pocket4(glm::vec3(-89.0f, 0.1f, -178.5f));
-	Pocket pocket5(glm::vec3(89.0f, 0.1f, 0.0f));
-	Pocket pocket6(glm::vec3(-89.0f, 0.1f, 0.0f));
+	Pocket pocket1(glm::vec3(89.0f, 0.1f, 178.5f),-45);
+	Pocket pocket2(glm::vec3(-89.0f, 0.1f, 178.5f),-135);
+	Pocket pocket3(glm::vec3(89.0f, 0.1f, -178.5f), 45);
+	Pocket pocket4(glm::vec3(-89.0f, 0.1f, -178.5f), 135);
+	Pocket pocket5(glm::vec3(89.0f, 0.1f, 0.0f), 0);
+	Pocket pocket6(glm::vec3(-89.0f, 0.1f, 0.0f), 180);
 
 	listOfPockets.push_back(&pocket1);
 	listOfPockets.push_back(&pocket2);
@@ -154,7 +154,7 @@ int main(void)
 	listOfPockets.push_back(&pocket5);
 	listOfPockets.push_back(&pocket6);
 
-	
+
 	
 	// Initialise GLFW
 	if (!glfwInit())
@@ -221,6 +221,7 @@ int main(void)
 	createBuffers(listOfPockets);
 	relocateMatrices(listOfBalls);
 	relocateMatrices(listOfPockets);
+	rotateMatrices(listOfPockets);
 	
 	//test gui
 	initPowerBar2D();

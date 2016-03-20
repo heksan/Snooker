@@ -106,6 +106,12 @@ void relocateMatrices(std::list<Pocket*> listOfPockets){
 
 }
 
+void rotateMatrices(std::list<Pocket*> listOfPockets){
+	for (std::list<Pocket*>::iterator currentPocket = listOfPockets.begin(); currentPocket != listOfPockets.end(); currentPocket++){
+		(*currentPocket)->matrix = glm::rotate((*currentPocket)->matrix, float((*currentPocket)->rotation*M_PI/180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	}
+}
+
 //Checks if collisions happen and uses different methods depending on case, does double comparisons, fix?
 void checkBallCollisions(std::list<Ball*> listOfBalls, bool& foulCommitted, Player& currentPlayer, Player& otherPlayer){
 	for (std::list<Ball*>::iterator ballOne = listOfBalls.begin(); ballOne != listOfBalls.end(); ballOne++){

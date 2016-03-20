@@ -16,7 +16,7 @@ using namespace glm;
 
 
 
-Pocket::Pocket(glm::vec3 pocketPosition)
+Pocket::Pocket(glm::vec3 pocketPosition,float angle)
 {
 
 	for (float i = 0.0f; i <= 360.0f; i += 30.0f){
@@ -26,6 +26,43 @@ Pocket::Pocket(glm::vec3 pocketPosition)
 		colorBufferData.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
 		colorBufferData.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
 		colorBufferData.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+
+		if (i < 180){
+			vertexBufferData.push_back(glm::vec3(radius*sin(i * M_PI / 180.0f), -2.55f, radius*cos(i* M_PI / 180.0f)));
+			vertexBufferData.push_back(glm::vec3(radius * sin((i + 30.0f)  * M_PI / 180.0f), -2.55f, radius * cos((i + 30.0f)* M_PI / 180.0f)));
+			vertexBufferData.push_back(glm::vec3(radius*sin(i * M_PI / 180.0f), 2.55f, radius*cos(i* M_PI / 180.0f)));
+			colorBufferData.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+			colorBufferData.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+			colorBufferData.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+
+			vertexBufferData.push_back(glm::vec3(radius*sin(i * M_PI / 180.0f), 2.55f, radius*cos(i* M_PI / 180.0f)));
+			vertexBufferData.push_back(glm::vec3(radius * sin((i + 30.0f)  * M_PI / 180.0f), -2.55f, radius * cos((i + 30.0f)* M_PI / 180.0f)));
+			vertexBufferData.push_back(glm::vec3(radius * sin((i + 30.0f)  * M_PI / 180.0f), 2.55f, radius * cos((i + 30.0f)* M_PI / 180.0f)));
+			colorBufferData.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+			colorBufferData.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+			colorBufferData.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+
+			if (i < 90){
+				vertexBufferData.push_back(glm::vec3(radius*sin(i * M_PI / 180.0f), 2.55f, radius*cos(i* M_PI / 180.0f)));
+				vertexBufferData.push_back(glm::vec3(radius * sin((i + 30.0f)  * M_PI / 180.0f), 2.55f, radius * cos((i + 30.0f)* M_PI / 180.0f)));
+				vertexBufferData.push_back(glm::vec3(radius, 2.55f, radius));
+				colorBufferData.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+				colorBufferData.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+				colorBufferData.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+			}
+			else{
+				vertexBufferData.push_back(glm::vec3(radius*sin(i * M_PI / 180.0f), 2.55f, radius*cos(i* M_PI / 180.0f)));
+				vertexBufferData.push_back(glm::vec3(radius * sin((i + 30.0f)  * M_PI / 180.0f), 2.55f, radius * cos((i + 30.0f)* M_PI / 180.0f)));
+				vertexBufferData.push_back(glm::vec3(radius, 2.55f, -radius));
+				colorBufferData.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+				colorBufferData.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+				colorBufferData.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+			}
+
+		}
+
+		rotation = angle;
+
 	}
 
 
