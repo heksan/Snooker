@@ -74,7 +74,8 @@ Table::Table()
 		colorBufferDataFrame.push_back(*col);
 	}
 	//vector1.insert( vector1.end(), vector2.begin(), vector2.end() );
-
+	copyVec3.clear();
+	copyVec4.clear();
 }
 
 void insertShortSide(float tableWidth, float tableLength, std::vector<glm::vec3>& vertexBufferDataFrame, std::vector<glm::vec3>& colorBufferDataFrame){
@@ -94,40 +95,40 @@ void insertShortSide(float tableWidth, float tableLength, std::vector<glm::vec3>
 	vertexBufferDataFrame.push_back(glm::vec3(-tableWidth + pocketRadius, 2.6f, tableLength));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth - pocketRadius, 2.6f, tableLength));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth - pocketRadius, 2.6f, tableLength - (2 * ballRadius)));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
 	vertexBufferDataFrame.push_back(glm::vec3(-tableWidth + pocketRadius, 2.6f, tableLength));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth - pocketRadius, 2.6f, tableLength));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth - pocketRadius, 2.6f, tableLength - (2 * ballRadius)));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
 	vertexBufferDataFrame.push_back(glm::vec3(-tableWidth + pocketRadius, 2.6f, tableLength));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth - pocketRadius, 2.6f, tableLength - (2 * ballRadius)));
 	vertexBufferDataFrame.push_back(glm::vec3(-tableWidth + pocketRadius, 2.6f, tableLength - (2 * ballRadius)));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
 //corner1
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth - pocketRadius, 2.6f, tableLength));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth - pocketRadius, 2.6f, tableLength - (2 * ballRadius)));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth, 2.6f, tableLength- (2 * ballRadius)));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth, 2.6f, tableLength - (2 * ballRadius)));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth + (2 * ballRadius), 2.6f, tableLength - (2 * ballRadius)));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth + (2 * ballRadius), 2.6f, tableLength));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth , 2.6f, tableLength + (2 * ballRadius)));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth + (2 * ballRadius), 2.6f, tableLength));//
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth + (2 * ballRadius), 2.6f, tableLength + (2 * ballRadius)));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
 
 	//side1
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth, -2.6f, tableLength+pocketRadius));
@@ -145,15 +146,15 @@ void insertShortSide(float tableWidth, float tableLength, std::vector<glm::vec3>
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth, 2.6f, tableLength + pocketRadius));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth, 2.6f, -pocketRadius));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth + 2*pocketRadius, 2.6f, tableLength + pocketRadius));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth, 2.6f, - pocketRadius));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth + 2*pocketRadius, 2.6f, -pocketRadius));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth + 2*pocketRadius, 2.6f, tableLength + pocketRadius));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
 
 
 
@@ -175,20 +176,20 @@ void insertShortSide(float tableWidth, float tableLength, std::vector<glm::vec3>
 	vertexBufferDataFrame.push_back(glm::vec3(-tableWidth + pocketRadius, 2.6f, -tableLength));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth - pocketRadius, 2.6f, -tableLength));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth - pocketRadius, 2.6f, -tableLength + (2 * ballRadius)));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
 	vertexBufferDataFrame.push_back(glm::vec3(-tableWidth + pocketRadius, 2.6f, -tableLength));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth - pocketRadius, 2.6f, -tableLength));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth - pocketRadius, 2.6f, -tableLength + (2 * ballRadius)));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
 	vertexBufferDataFrame.push_back(glm::vec3(-tableWidth + pocketRadius, 2.6f, -tableLength));
 	vertexBufferDataFrame.push_back(glm::vec3(tableWidth - pocketRadius, 2.6f, -tableLength + (2 * ballRadius)));
 	vertexBufferDataFrame.push_back(glm::vec3(-tableWidth + pocketRadius, 2.6f, -tableLength + (2 * ballRadius)));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));
-	colorBufferDataFrame.push_back(glm::vec3(1, 1, 0));*/
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));
+	colorBufferDataFrame.push_back(glm::vec3(0.8,0.2,0.2));*/
 }
 
