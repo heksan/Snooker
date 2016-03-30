@@ -102,13 +102,16 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="TextVertexShader.vertexshader">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="TextureFragmentShader.fragmentshader">
       <Filter>shaders</Filter>
     </None>
     <None Include="TextureVertexShader.vertexshader">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="TextureVertexShader2D.vertexshader">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="GUIVertexShader.vertexshader">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

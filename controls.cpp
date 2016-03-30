@@ -4,7 +4,7 @@
 #include <list>
 #define _USE_MATH_DEFINES
 #include <math.h>
-extern GLFWwindow* window;  //fix this hack
+extern GLFWwindow* window;
 
 // Include GLM
 #include <glm/glm.hpp>
@@ -46,7 +46,6 @@ void checkStart(bool& cueStickMoving,float& force){
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS){
 		if (xpos>999.0f && screenHeight - ypos>200.0f && screenHeight-ypos<575.0f){
 			force = (screenHeight - float(ypos) - 200.0f) / powerScaleFactor; 
-			//std::cout << force<<"\n";
 		}
 		else{
 			cueStickMoving = true;
@@ -132,6 +131,7 @@ glm::vec2 castRayThroughMouse(){
 	return glm::vec2(0.0f, 0.0f);
 }
 
+//right click button for placing ball back to "starting area"
 void checkClick(bool& foulCommitted){
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS){
