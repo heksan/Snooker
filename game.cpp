@@ -41,6 +41,7 @@ int main(void)
 {
 
 	//init matrices
+	glm::vec3 cameraPosition;//later will not used
 	glm::vec2 mouseRay;
 	glm::mat4 ProjectionMatrix;
 	glm::mat4 ViewMatrix;
@@ -58,7 +59,7 @@ int main(void)
 
 	//init balls and its list
 	std::list<Ball*> listOfBalls;
-	std::list<Ball*> listOfRepleacableBalls; 
+	std::list<Ball*> listOfRepleacableBalls; //here goes white and all colours besides red
 	Ball cueBall(0, glm::vec3(0, 0, -130));
 
 	/////////////////uncomment this and push_backs, delete test lines for all balls in right positions
@@ -153,6 +154,8 @@ int main(void)
 	listOfPockets.push_back(&pocket5);
 	listOfPockets.push_back(&pocket6);
 
+
+	
 	// Initialise GLFW
 	if (!glfwInit())
 	{
@@ -164,9 +167,16 @@ int main(void)
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	window = glfwCreateWindow(1024, 768, "Snooker Game", NULL, NULL);
+	if (window == NULL){
+		fprintf(stderr, "Failed\n");
+		getchar();
+		glfwTerminate();
+		return -1;
+	}
 	glfwMakeContextCurrent(window);
 
 	// Initialize GLEW
@@ -178,12 +188,13 @@ int main(void)
 		return -1;
 	}
 
-	//prepare textures
-	GLuint tableTexture = loadBMP(".\\texture.bmp");
-	GLuint p1Texture = loadBMP(".\\player1.bmp");
-	GLuint p2Texture = loadBMP(".\\player2.bmp");
+	GLuint tableTexture = loadBMP(".\\texture.bmp"); // this has to be AFTER glew init
 
-	// background
+
+	// Ensure we can capture the escape key being pressed below
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_FALSE);
+
+	// Dark blue background
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
 	// Enable depth test
@@ -191,17 +202,18 @@ int main(void)
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 
+	GLuint VertexArrayID;
+	glGenVertexArrays(1, &VertexArrayID);
+	glBindVertexArray(VertexArrayID);
+
 	// Create and compile our GLSL program from the shaders
 	GLuint colorShader = LoadShaders("TransformVertexShader.vertexshader", "ColorFragmentShader.fragmentshader");
 	GLuint textureShader = LoadShaders("TextureVertexShader.vertexshader", "TextureFragmentShader.fragmentshader");
-	GLuint textureShader2D = LoadShaders("TextureVertexShader2D.vertexshader", "TextureFragmentShader.fragmentshader");
-	GLuint colorShader2D = LoadShaders("GUIVertexShader.vertexshader", "ColorFragmentShader.fragmentshader");
 
-
-	// uniforms
+	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(colorShader, "MVP"); //apparently only this is used
 	GLuint TextureMatrixID = glGetUniformLocation(textureShader, "MVP");
-	GLuint SamplerID = glGetUniformLocation(textureShader, "textureSampler");
+	GLuint SamplerID = glGetUniformLocation(textureShader, "myTextureSampler");
 
 	createBuffer(table);
 	createBuffer(cueStick);
@@ -211,7 +223,7 @@ int main(void)
 	relocateMatrices(listOfPockets);
 	rotateMatrices(listOfPockets);
 	
-	//gui init
+	//test gui
 	initPowerBar2D();
 	initPlayerIndicator2D();
 	initAimHelper(colorShader);
@@ -219,6 +231,11 @@ int main(void)
 
 	do{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glUseProgram(colorShader);
+		printPowerBar2D(force);
+		printPlayerIndicator2D(currentPlayerID);
+		glUseProgram(colorShader);
+		
 		computeCameraMatricesFromInputs();
 		ProjectionMatrix = getProjectionMatrix();//refactor this and next line
 		ViewMatrix = getViewMatrix();
@@ -247,6 +264,7 @@ int main(void)
 				checkCollisionCount(foulCommited, currentPlayer,otherPlayer);
 			}
 			if (!ballsMoving && !foulCommited && !appropriateBallPocketed){
+
 				Player dummy = currentPlayer;
 				currentPlayer = otherPlayer;
 				otherPlayer = dummy;
@@ -269,32 +287,30 @@ int main(void)
 				relocateCueBall(mouseRay, cueBall);
 				checkClick(foulCommited);
 				if (foulCommited == false){
+
 					//switch players, move to method
 					Player dummy = currentPlayer;
 					currentPlayer = otherPlayer;
 					otherPlayer = dummy;
+
 					whitePocketed = false;
 					std::cout << "player " << currentPlayer.ID << " turn \n";
 				}
 			}
 			else{
 				foulCommited = false;
+
 				Player dummy = currentPlayer;
 				currentPlayer = otherPlayer;
 				otherPlayer = dummy;
+
 				std::cout << "player " << currentPlayer.ID << " turn \n";
 			}
 		}
 
-		////end of game loop//////
-		//gui print
-		glUseProgram(colorShader2D);
-		printPowerBar2D(force);
-		glUseProgram(textureShader2D);
-		printPlayerIndicator2D(currentPlayerID, p1Texture, p2Texture);
 
-		//game objects print
-		glUseProgram(colorShader);
+		////end of game loop//////
+		
 		drawBalls(listOfBalls, MatrixID, ViewMatrix, ProjectionMatrix);
 		glUseProgram(textureShader);
 		drawTable(table, TextureMatrixID, SamplerID, ViewMatrix, ProjectionMatrix,tableTexture);
@@ -304,15 +320,14 @@ int main(void)
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-		glfwSwapInterval(1);//sets lags:D
+		glfwSwapInterval(1);
+
+
 	} while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
 
 	cleanupBuffers(listOfBalls);
-	cleanupBuffers(listOfPockets);
 	glDeleteProgram(colorShader);
-	glDeleteProgram(colorShader2D);
-	glDeleteProgram(textureShader);
-	glDeleteProgram(textureShader2D);
+	glDeleteVertexArrays(1, &VertexArrayID);
 	glfwTerminate();
 	return 0;
 }
@@ -320,11 +335,28 @@ int main(void)
 
 
 ///////////////////////////notes
-
+//raf shaders
+//set same order for players in all methods
+// change orange to brown and swap
+// ref shaderloader
 // fix two moving
+//gui - new shader needed for text
+//trace
+//
 
+
+//points for first hit or no hit
+
+//
+// table can be static?
+///
+// 
+// graphics should be better
+//
+//
+//
 /////////////// if enough time:
-//angular velocity and angles(nope)
+//angular velocity
 //mouse wheel
 //
 //

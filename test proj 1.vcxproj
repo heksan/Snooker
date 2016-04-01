@@ -105,8 +105,7 @@
   <ItemGroup>
     <None Include="TextureFragmentShader.fragmentshader" />
     <None Include="TextureVertexShader.vertexshader" />
-    <None Include="TextureVertexShader2D.vertexshader" />
-    <None Include="GUIVertexShader.vertexshader" />
+    <None Include="TextVertexShader.vertexshader" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="texture.bmp" />

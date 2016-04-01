@@ -23,11 +23,11 @@ void createBuffer(Table& table){
 
 	glGenBuffers(1, &table.vertexbufferTable);
 	glBindBuffer(GL_ARRAY_BUFFER, table.vertexbufferTable);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(table.vertexBufferDataTable), table.vertexBufferDataTable, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(table.vertex_buffer_data_table), table.vertex_buffer_data_table, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &table.uvbufferTable);
 	glBindBuffer(GL_ARRAY_BUFFER, table.uvbufferTable);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(table.uvBufferDataTable), table.uvBufferDataTable, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(table.uv_buffer_data_table), table.uv_buffer_data_table, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &table.vertexbufferFrame);
 	glBindBuffer(GL_ARRAY_BUFFER, table.vertexbufferFrame);
@@ -104,10 +104,10 @@ void drawBall(Ball ball, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 Projec
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, ball.vertexbuffer);
 	glVertexAttribPointer(
-		0,                  // attribute. 0 for vert 1 for col
-		3,                  // size of data(3 vars per point)
+		0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
+		3,                  // size
 		GL_FLOAT,           // type
-		GL_FALSE,           // no idea
+		GL_FALSE,           // normalized?
 		0,                  // stride
 		(void*)0            // array buffer offset
 		);
@@ -115,12 +115,12 @@ void drawBall(Ball ball, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 Projec
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, ball.colorbuffer);
 	glVertexAttribPointer(
-		1,                               
-		3,                                
-		GL_FLOAT,                        
-		GL_FALSE,                         
-		0,                               
-		(void*)0                         
+		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+		3,                                // size
+		GL_FLOAT,                         // type
+		GL_FALSE,                         // normalized?
+		0,                                // stride
+		(void*)0                          // array buffer offset
 		);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, ball.noVertices / 3);
@@ -168,8 +168,10 @@ void drawPockets(std::list<Pocket*> listOfPockets, GLuint MatrixID, glm::mat4 Vi
 		glDisableVertexAttribArray(1);
 	}
 }
-//only draw here with texture
+
+
 void drawTable(Table table, GLuint MatrixID, GLuint TextureID, glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix, GLuint tableTexture){
+
 
 	table.MVP = ProjectionMatrix * ViewMatrix * table.matrix;
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &table.MVP[0][0]);
@@ -236,12 +238,5 @@ void cleanupBuffers(std::list<Ball*> listOfBalls){
 	for (std::list<Ball*>::iterator currentBall = listOfBalls.begin(); currentBall != listOfBalls.end(); currentBall++){
 		glDeleteBuffers(1, &(*currentBall)->vertexbuffer);
 		glDeleteBuffers(1, &(*currentBall)->colorbuffer);
-	}
-}
-
-void cleanupBuffers(std::list<Pocket*> listOfPockets){
-	for (std::list<Pocket*>::iterator currentPocket = listOfPockets.begin(); currentPocket != listOfPockets.end(); currentPocket++){
-		glDeleteBuffers(1, &(*currentPocket)->vertexbuffer);
-		glDeleteBuffers(1, &(*currentPocket)->colorbuffer);
 	}
 }

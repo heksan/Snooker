@@ -10,10 +10,10 @@ class Table
 {
 
 public:
-	GLfloat vertexBufferDataTable[18];
+	GLfloat vertex_buffer_data_table[18];
 	std::vector<glm::vec3> vertexBufferDataFrame;
 	std::vector<glm::vec3> colorBufferDataFrame;
-	GLfloat uvBufferDataTable[12];
+	GLfloat uv_buffer_data_table[12];
 	GLuint vertexbufferTable;
 	GLuint colorbufferTable;
 	GLuint vertexbufferFrame;
