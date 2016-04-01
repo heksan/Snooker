@@ -18,4 +18,6 @@ void drawTable(Table table, GLuint MatrixID, GLuint TextureID, glm::mat4 ViewMat
 void drawFrame(Table table, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix);
 void drawCueStick(CueStick cueStick, GLuint MatrixID, glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix);
 void cleanupBuffers(std::list<Ball*> listOfBalls);
+void cleanupBuffers(std::list<Pocket*> listOfPockets);
+
 #endif

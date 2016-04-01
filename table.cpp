@@ -18,7 +18,7 @@ const float pocketRadius = 3.5f;
 const float tableWidth_var = 89.0f;
 const float tableLength_var = 178.5f;
 
-GLfloat vertex_buffer_data_table_g[] = {//delete this g
+GLfloat vertexBufferDataTable_g[] = {//delete this g
 	-89.0f, -2.6f, -178.5f,
 	-89.0f, -2.6f, 178.5f,
 	89.0f, -2.6f, 178.5f,
@@ -41,12 +41,10 @@ Table::Table()
 {
 	
 	for (int i = 0; i < 18; i++){
-		vertex_buffer_data_table[i] = vertex_buffer_data_table_g[i];
-		//color_buffer_data_table[i] = color_buffer_data_table_g[i];
+		vertexBufferDataTable[i] = vertexBufferDataTable_g[i];
 	};
 	for (int i = 0; i < 12; i++){
-		uv_buffer_data_table[i] = uv_buffer_data_table_g[i];
-		//color_buffer_data_table[i] = color_buffer_data_table_g[i];
+		uvBufferDataTable[i] = uv_buffer_data_table_g[i];
 	};
 	glm::mat4 matrix = glm::mat4(1.0);
 
