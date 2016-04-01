@@ -191,6 +191,11 @@ int main(void)
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 
+	//vao, great mystery
+	GLuint VertexArrayID;
+	glGenVertexArrays(1, &VertexArrayID);
+	glBindVertexArray(VertexArrayID);
+
 	// Create and compile our GLSL program from the shaders
 	GLuint colorShader = LoadShaders("TransformVertexShader.vertexshader", "ColorFragmentShader.fragmentshader");
 	GLuint textureShader = LoadShaders("TextureVertexShader.vertexshader", "TextureFragmentShader.fragmentshader");
