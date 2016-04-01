@@ -109,8 +109,6 @@
     <None Include="GUIVertexShader.vertexshader" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="player1.bmp" />
-    <Image Include="player2.bmp" />
     <Image Include="texture.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
