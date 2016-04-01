@@ -126,7 +126,7 @@ void printPlayerIndicator2D(int id, GLuint p1Texture, GLuint p2Texture){
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		if (id == 1){
 			glBindTexture(GL_TEXTURE_2D, p1Texture);
-		} 
+		}  
 		else{
 			glBindTexture(GL_TEXTURE_2D, p2Texture);
 		}
