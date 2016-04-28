@@ -12,7 +12,7 @@ extern GLFWwindow* window;
 using namespace glm;
 
 #include "controls.h"
-#include "gameEngine.h"
+//#include "gameEngine.h"
 const float screenWidth = 1024.0f;
 const float screenHeight = 768.0f;
 const float FoV = 45.0f;

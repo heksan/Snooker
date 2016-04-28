@@ -157,7 +157,7 @@ int main(void)
 	if (!glfwInit())
 	{
 		fprintf(stderr, "Failed to initialize GLFW\n");
-		getchar();
+		//getchar();
 		return -1;
 	}
 
@@ -173,7 +173,7 @@ int main(void)
 	glewExperimental = true; // Needed for core profile
 	if (glewInit() != GLEW_OK) {
 		fprintf(stderr, "Failed GLEW\n");
-		getchar();
+		//getchar();
 		glfwTerminate();
 		return -1;
 	}

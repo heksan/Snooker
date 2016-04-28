@@ -1,6 +1,6 @@
 #ifndef CONTROLS_H
 #define CONTROLS_H
-#include "ball.h"
+//#include "ball.h"
 
 void computeCameraMatricesFromInputs();
 void checkStart(bool& cueStickMoving,float& force);

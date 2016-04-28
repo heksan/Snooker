@@ -43,11 +43,13 @@ void createBuffer(CueStick& cueStick){
 
 	glGenBuffers(1, &cueStick.vertexbufferStick);
 	glBindBuffer(GL_ARRAY_BUFFER, cueStick.vertexbufferStick);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cueStick.vertex_buffer_data_stick), cueStick.vertex_buffer_data_stick, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cueStick.vertex_buffer_data_stick)
+		, cueStick.vertex_buffer_data_stick, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &cueStick.colorbufferStick);
 	glBindBuffer(GL_ARRAY_BUFFER, cueStick.colorbufferStick);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cueStick.color_buffer_data_stick), cueStick.color_buffer_data_stick, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cueStick.color_buffer_data_stick)
+		, cueStick.color_buffer_data_stick, GL_STATIC_DRAW);
 }
 
 void createBuffer(Ball& ball){

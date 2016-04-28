@@ -114,6 +114,7 @@
     <None Include="GUIVertexShader.vertexshader">
       <Filter>shaders</Filter>
     </None>
+    <None Include="ClassDiagram11.cd" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="texture.bmp">

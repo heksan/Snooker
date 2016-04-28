@@ -15,7 +15,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
-#include "shader.h"
+//#include "shader.h"
 
 GLuint powerBarVertexBufferID;
 GLuint powerBarColorBufferID;
